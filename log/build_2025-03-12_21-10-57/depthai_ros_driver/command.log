@@ -1,2 +1,0 @@
-Invoking command in '/home/ubuntu/ros2_ws/build/depthai_ros_driver': /usr/bin/cmake /home/ubuntu/ros2_ws/src/depthai_ros_driver -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/ubuntu/ros2_ws/install/depthai_ros_driver
-Invoked command in '/home/ubuntu/ros2_ws/build/depthai_ros_driver' returned '1': /usr/bin/cmake /home/ubuntu/ros2_ws/src/depthai_ros_driver -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/ubuntu/ros2_ws/install/depthai_ros_driver
