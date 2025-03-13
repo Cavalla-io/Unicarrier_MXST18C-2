@@ -5,9 +5,9 @@ import threading
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
 
-class InputListener(Node):
-    def __init__(self):
-        super().__init__('input_listener')
+class InputListener:
+    def __init__(self, parent_node):
+        self.node = parent_node  # Store a reference to the parent node
         self._lock = threading.Lock()
         # Drive commands: throttle (boolean), steering direction: 'L', 'R', or None.
         self.drive_command = {"throttle": False, "steering": None}
@@ -15,23 +15,24 @@ class InputListener(Node):
         self.lift_command = {"gas": False, "lift": False, "lower": False, "sideshift": None,
                              "drive": "NEUTRAL", "tilt": None}
         # Create subscriptions for Joy and Twist topics.
-        self.joy_subscriber = self.create_subscription(
+        self.joy_subscriber = self.node.create_subscription(
             Joy,
             '/joy',
             self.joy_callback,
             10)
-        self.twist_subscriber = self.create_subscription(
+        self.twist_subscriber = self.node.create_subscription(
             Twist,
             '/twist',
             self.twist_callback,
             10)
         # (Optional) A flag if you need to run a loop in a separate thread.
         self.running = True
+        
+        self.node.get_logger().info("Input listener initialized")
 
     def start(self):
-        # Spin this node in a separate thread so that the subscriptions work.
-        thread = threading.Thread(target=rclpy.spin, args=(self,), daemon=True)
-        thread.start()
+        # No longer need to spin in a separate thread as we're using the parent node
+        pass
 
     def stop(self):
         # Here we don't need to do any extra cleanup for now.
@@ -78,14 +79,6 @@ class InputListener(Node):
                     self.lift_command["sideshift"] = 'R'
                 else:
                     self.lift_command["sideshift"] = None
-                
-                # Tilt command for lift - commented out for now
-                # if msg.buttons[X] == 1:  # Replace X with appropriate button number
-                #     self.lift_command["tilt"] = "TILT_UP"
-                # elif msg.buttons[Y] == 1:  # Replace Y with appropriate button number
-                #     self.lift_command["tilt"] = "TILT_DOWN"
-                # else:
-                #     self.lift_command["tilt"] = None
 
     def twist_callback(self, msg: Twist):
         # If you wish to use Twist messages for lift commands, implement your mapping here.
@@ -100,16 +93,4 @@ class InputListener(Node):
         with self._lock:
             return self.lift_command.copy()
 
-def main(args=None):
-    rclpy.init(args=args)
-    input_listener = InputListener()
-    input_listener.start()
-    try:
-        rclpy.spin(input_listener)
-    except KeyboardInterrupt:
-        pass
-    input_listener.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
+# We no longer need the main() function as this is not a standalone node

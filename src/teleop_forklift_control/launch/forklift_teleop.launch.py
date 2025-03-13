@@ -20,7 +20,7 @@ def generate_launch_description():
     main_controller_node = Node(
         package='teleop_forklift_control',
         executable='main',
-        name='forklift_controller_node',
+        name='main_controller_node',
         output='screen',
         emulate_tty=True,
         parameters=[]
@@ -30,7 +30,7 @@ def generate_launch_description():
     wheel_tracker_sim_node = Node(
         package='teleop_forklift_control',
         executable='wheel_tracker',
-        name='wheel_tracker_node',
+        name='wheel_tracker_sim_node',
         output='screen',
         emulate_tty=True,
         arguments=['--sim'],
@@ -41,7 +41,7 @@ def generate_launch_description():
     wheel_tracker_real_node = Node(
         package='teleop_forklift_control',
         executable='wheel_tracker',
-        name='wheel_tracker_node',
+        name='wheel_tracker_real_node',
         output='screen',
         emulate_tty=True,
         condition=UnlessCondition(LaunchConfiguration('sim_mode'))

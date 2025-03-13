@@ -11,9 +11,10 @@ from teleop_forklift_control.controller_depends.lift_controller import LiftContr
 
 class CombinedControllerNode(Node):
     def __init__(self):
-        super().__init__('combined_controller_node')
-        # Create the shared input listener (as a node)
-        self.listener = InputListener()
+        super().__init__('main_controller_node')
+        
+        # Create the shared input listener as a component within this node
+        self.listener = InputListener(self)
         
         # Instantiate your controllers (drive and lift) using the listener.
         self.drive_ctrl = DriveController(self.listener)
@@ -35,28 +36,20 @@ class CombinedControllerNode(Node):
         self.get_logger().info("Shutting down combined controller node.")
         self.drive_ctrl.close()
         self.lift_ctrl.close()
-        # Instead of calling a custom stop() method, simply destroy the listener node.
-        self.listener.destroy_node()
+        self.listener.stop()
 
 def main(args=None):
     rclpy.init(args=args)
-    # Create both nodes.
+    # Create the node
     combined_node = CombinedControllerNode()
-    listener_node = combined_node.listener  # our InputListener node
-
-    # Create a multi-threaded executor and add both nodes.
-    executor = MultiThreadedExecutor()
-    executor.add_node(combined_node)
-    executor.add_node(listener_node)
     
     try:
-        executor.spin()
+        rclpy.spin(combined_node)
     except KeyboardInterrupt:
         combined_node.get_logger().info("Keyboard interrupt received, shutting down.")
     finally:
         combined_node.shutdown()
         combined_node.destroy_node()
-        listener_node.destroy_node()
         rclpy.shutdown()
 
 if __name__ == '__main__':
