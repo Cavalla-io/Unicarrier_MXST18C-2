@@ -1,4 +1,0 @@
-[console_scripts]
-main = teleop_forklift_control.scripts.main:main
-wheel_tracker = teleop_forklift_control.scripts.wheel_tracker_node:main
-
