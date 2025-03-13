@@ -49,6 +49,8 @@ Launch the forklift teleop control:
 ros2 launch teleop_forklift_control forklift_teleop.launch.py
 ```
 
+**Note:** The wheel tracker functionality is integrated within the forklift_teleop.launch.py file. There is no separate wheel_tracker launch file.
+
 #### Control Parameters:
 - Drive controller controls forklift movement
 - Lift controller manages fork height
@@ -63,6 +65,42 @@ Run the camera nodes (when available):
 ros2 run camera_pipelines [node_name]
 ```
 
+## CAN Bus Setup
+
+This workspace includes scripts to set up and manage CAN bus interfaces:
+
+### Initial Setup (one-time)
+
+Run the network privileges setup script with sudo:
+```bash
+sudo ./setup_network_privileges.sh
+```
+
+This will:
+1. Grant your user the necessary permissions to manage network interfaces
+2. Set up a systemd service to automatically configure the CAN bus at startup
+3. Install required CAN utilities
+
+You may need to log out and log back in for group changes to take effect.
+
+### Using the CAN Tools
+
+After the setup, you can use the CAN tools script without sudo:
+```bash
+./can_tools.sh status    # Check CAN interface status
+./can_tools.sh start     # Start the CAN interface
+./can_tools.sh stop      # Stop the CAN interface
+./can_tools.sh restart   # Restart the CAN interface
+./can_tools.sh monitor   # Monitor CAN traffic
+./can_tools.sh send 123#DEADBEEF  # Send a CAN frame
+./can_tools.sh install   # Install CAN utilities if needed
+```
+
+CAN Bus Configuration:
+- Type: can
+- Bitrate: 250000
+- TX Queue Length: 10000
+
 ## Development
 
 ### Workspace Structure
@@ -74,6 +112,8 @@ ros2_ws/
 ├── build/          # Build artifacts (ignored by git)
 ├── install/        # Install space (ignored by git)
 ├── log/            # Log files (ignored by git)
+├── can_tools.sh    # Script for CAN bus operations
+├── setup_network_privileges.sh  # Setup script for network permissions
 ```
 
 ### Adding New Packages
@@ -101,6 +141,18 @@ If you encounter issues:
 3. Check ROS2 environment:
    ```bash
    printenv | grep -i ROS
+   ```
+
+4. To see available launch files for a package:
+   ```bash
+   ros2 pkg prefix teleop_forklift_control
+   ls $(ros2 pkg prefix teleop_forklift_control)/share/teleop_forklift_control/launch
+   ```
+
+5. If having CAN bus issues:
+   ```bash
+   ./can_tools.sh status    # Check the status of CAN interface
+   sudo systemctl status can-setup.service  # Check if the service is running
    ```
 
 ## License
