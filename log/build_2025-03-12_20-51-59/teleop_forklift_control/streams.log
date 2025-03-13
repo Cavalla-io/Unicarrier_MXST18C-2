@@ -1,0 +1,21 @@
+[6.924s] Invoking command in '/home/ubuntu/ros2_ws/src/teleop_forklift_control': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/teleop_forklift_control build --build-base /home/ubuntu/ros2_ws/build/teleop_forklift_control/build install --record /home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log --single-version-externally-managed install_data
+[8.520s] running egg_info
+[8.523s] writing ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/PKG-INFO
+[8.527s] writing dependency_links to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/dependency_links.txt
+[8.528s] writing entry points to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/entry_points.txt
+[8.530s] writing requirements to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/requires.txt
+[8.532s] writing top-level names to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/top_level.txt
+[8.559s] reading manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+[8.566s] writing manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+[8.571s] running build
+[8.572s] running build_py
+[8.597s] running install
+[8.599s] running install_lib
+[8.636s] running install_data
+[8.640s] running install_egg_info
+[8.650s] removing '/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info' (and everything under it)
+[8.677s] Copying ../../build/teleop_forklift_control/teleop_forklift_control.egg-info to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info
+[8.695s] running install_scripts
+[8.886s] Installing main script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control
+[8.892s] writing list of installed files to '/home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log'
+[9.287s] Invoked command in '/home/ubuntu/ros2_ws/src/teleop_forklift_control' returned '0': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/teleop_forklift_control build --build-base /home/ubuntu/ros2_ws/build/teleop_forklift_control/build install --record /home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log --single-version-externally-managed install_data

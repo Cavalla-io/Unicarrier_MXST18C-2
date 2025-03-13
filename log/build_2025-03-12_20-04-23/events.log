@@ -1,0 +1,134 @@
+[0.000000] (-) TimerEvent: {}
+[0.001666] (camera_pipelines) JobQueued: {'identifier': 'camera_pipelines', 'dependencies': OrderedDict()}
+[0.002272] (depthai_ros_driver) JobQueued: {'identifier': 'depthai_ros_driver', 'dependencies': OrderedDict()}
+[0.002739] (teleop_forklift_control) JobQueued: {'identifier': 'teleop_forklift_control', 'dependencies': OrderedDict()}
+[0.002925] (camera_pipelines) JobStarted: {'identifier': 'camera_pipelines'}
+[0.040136] (depthai_ros_driver) JobStarted: {'identifier': 'depthai_ros_driver'}
+[0.060726] (teleop_forklift_control) JobStarted: {'identifier': 'teleop_forklift_control'}
+[0.098962] (-) TimerEvent: {}
+[0.199698] (-) TimerEvent: {}
+[0.300420] (-) TimerEvent: {}
+[0.401132] (-) TimerEvent: {}
+[0.501856] (-) TimerEvent: {}
+[0.602555] (-) TimerEvent: {}
+[0.703243] (-) TimerEvent: {}
+[0.803963] (-) TimerEvent: {}
+[0.904632] (-) TimerEvent: {}
+[1.005363] (-) TimerEvent: {}
+[1.106083] (-) TimerEvent: {}
+[1.206898] (-) TimerEvent: {}
+[1.282295] (depthai_ros_driver) JobProgress: {'identifier': 'depthai_ros_driver', 'progress': 'cmake'}
+[1.285755] (depthai_ros_driver) Command: {'cmd': ['/usr/bin/cmake', '/home/ubuntu/ros2_ws/src/depthai_ros_driver', '-DCMAKE_INSTALL_PREFIX=/home/ubuntu/ros2_ws/install/depthai_ros_driver'], 'cwd': '/home/ubuntu/ros2_ws/build/depthai_ros_driver', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'ubuntu'), ('SSH_CLIENT', '192.168.1.46 54962 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/ubuntu'), ('OLDPWD', '/home/ubuntu/ros2_ws/src'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/ubuntu/ros2_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'ubuntu'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '2'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ubuntu/ros2_ws/install/teleop_forklift_control:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/ubuntu/ros2_ws/build/depthai_ros_driver'), ('LC_ALL', 'en_US.UTF-8'), ('SSH_CONNECTION', '192.168.1.46 54962 192.168.3.180 22'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/ubuntu/ros2_ws/build/teleop_forklift_control:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu/ros2_ws/install/teleop_forklift_control:/opt/ros/humble')]), 'shell': False}
+[1.307060] (-) TimerEvent: {}
+[1.344888] (depthai_ros_driver) StdoutLine: {'line': b'-- Found ament_cmake_auto: 1.3.11 (/opt/ros/humble/share/ament_cmake_auto/cmake)\n'}
+[1.407250] (-) TimerEvent: {}
+[1.509003] (-) TimerEvent: {}
+[1.610419] (-) TimerEvent: {}
+[1.711228] (-) TimerEvent: {}
+[1.812261] (-) TimerEvent: {}
+[1.913162] (-) TimerEvent: {}
+[2.014326] (-) TimerEvent: {}
+[2.115236] (-) TimerEvent: {}
+[2.216089] (-) TimerEvent: {}
+[2.316928] (-) TimerEvent: {}
+[2.417715] (-) TimerEvent: {}
+[2.518485] (-) TimerEvent: {}
+[2.588511] (depthai_ros_driver) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[2.600578] (depthai_ros_driver) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[2.618741] (-) TimerEvent: {}
+[2.638489] (depthai_ros_driver) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[2.694843] (depthai_ros_driver) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.719473] (-) TimerEvent: {}
+[2.757120] (depthai_ros_driver) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[2.819792] (-) TimerEvent: {}
+[2.921611] (-) TimerEvent: {}
+[2.926702] (depthai_ros_driver) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[2.933934] (depthai_ros_driver) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[3.021863] (-) TimerEvent: {}
+[3.127197] (-) TimerEvent: {}
+[3.228933] (-) TimerEvent: {}
+[3.330666] (-) TimerEvent: {}
+[3.432362] (-) TimerEvent: {}
+[3.534234] (-) TimerEvent: {}
+[3.635794] (-) TimerEvent: {}
+[3.737445] (-) TimerEvent: {}
+[3.796845] (depthai_ros_driver) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[3.837644] (-) TimerEvent: {}
+[3.939521] (-) TimerEvent: {}
+[4.041421] (-) TimerEvent: {}
+[4.143429] (-) TimerEvent: {}
+[4.245800] (-) TimerEvent: {}
+[4.348192] (-) TimerEvent: {}
+[4.450043] (-) TimerEvent: {}
+[4.553161] (-) TimerEvent: {}
+[4.658097] (-) TimerEvent: {}
+[4.733813] (camera_pipelines) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/camera_pipelines', 'build', '--build-base', '/home/ubuntu/ros2_ws/build/camera_pipelines/build', 'install', '--record', '/home/ubuntu/ros2_ws/build/camera_pipelines/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/ubuntu/ros2_ws/src/camera_pipelines', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'ubuntu', 'SSH_CLIENT': '192.168.1.46 54962 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/ubuntu', 'OLDPWD': '/home/ubuntu/ros2_ws/src', 'SSH_TTY': '/dev/pts/0', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/ubuntu/ros2_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'ubuntu', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '2', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/ubuntu/ros2_ws/install/teleop_forklift_control:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ubuntu/ros2_ws/build/camera_pipelines', 'LC_ALL': 'en_US.UTF-8', 'SSH_CONNECTION': '192.168.1.46 54962 192.168.3.180 22', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/ubuntu/ros2_ws/build/camera_pipelines/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages:/home/ubuntu/ros2_ws/build/teleop_forklift_control:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1'}, 'shell': False}
+[4.758268] (-) TimerEvent: {}
+[4.768034] (teleop_forklift_control) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/teleop_forklift_control', 'build', '--build-base', '/home/ubuntu/ros2_ws/build/teleop_forklift_control/build', 'install', '--record', '/home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/ubuntu/ros2_ws/src/teleop_forklift_control', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'ubuntu', 'SSH_CLIENT': '192.168.1.46 54962 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/ubuntu', 'OLDPWD': '/home/ubuntu/ros2_ws/src', 'SSH_TTY': '/dev/pts/0', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/ubuntu/ros2_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'ubuntu', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '2', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'AMENT_PREFIX_PATH': '/home/ubuntu/ros2_ws/install/teleop_forklift_control:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ubuntu/ros2_ws/build/teleop_forklift_control', 'LC_ALL': 'en_US.UTF-8', 'SSH_CONNECTION': '192.168.1.46 54962 192.168.3.180 22', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:/home/ubuntu/ros2_ws/build/teleop_forklift_control:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1'}, 'shell': False}
+[4.858454] (-) TimerEvent: {}
+[4.959809] (-) TimerEvent: {}
+[5.061918] (-) TimerEvent: {}
+[5.163533] (-) TimerEvent: {}
+[5.265127] (-) TimerEvent: {}
+[5.366662] (-) TimerEvent: {}
+[5.468105] (-) TimerEvent: {}
+[5.569559] (-) TimerEvent: {}
+[5.671314] (-) TimerEvent: {}
+[5.772810] (-) TimerEvent: {}
+[5.874438] (-) TimerEvent: {}
+[5.976031] (-) TimerEvent: {}
+[6.016309] (camera_pipelines) StdoutLine: {'line': b'running egg_info\n'}
+[6.021798] (camera_pipelines) StdoutLine: {'line': b'writing ../../build/camera_pipelines/camera_pipelines.egg-info/PKG-INFO\n'}
+[6.022398] (camera_pipelines) StdoutLine: {'line': b'writing dependency_links to ../../build/camera_pipelines/camera_pipelines.egg-info/dependency_links.txt\n'}
+[6.025552] (camera_pipelines) StdoutLine: {'line': b'writing entry points to ../../build/camera_pipelines/camera_pipelines.egg-info/entry_points.txt\n'}
+[6.026145] (camera_pipelines) StdoutLine: {'line': b'writing requirements to ../../build/camera_pipelines/camera_pipelines.egg-info/requires.txt\n'}
+[6.026608] (camera_pipelines) StdoutLine: {'line': b'writing top-level names to ../../build/camera_pipelines/camera_pipelines.egg-info/top_level.txt\n'}
+[6.033043] (camera_pipelines) StdoutLine: {'line': b"reading manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'\n"}
+[6.037051] (camera_pipelines) StdoutLine: {'line': b"writing manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'\n"}
+[6.038637] (camera_pipelines) StdoutLine: {'line': b'running build\n'}
+[6.039237] (camera_pipelines) StdoutLine: {'line': b'running build_py\n'}
+[6.042324] (camera_pipelines) StdoutLine: {'line': b'running install\n'}
+[6.042864] (camera_pipelines) StdoutLine: {'line': b'running install_lib\n'}
+[6.046828] (camera_pipelines) StdoutLine: {'line': b'running install_data\n'}
+[6.047704] (camera_pipelines) StdoutLine: {'line': b'running install_egg_info\n'}
+[6.055905] (camera_pipelines) StdoutLine: {'line': b"removing '/home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[6.057881] (camera_pipelines) StdoutLine: {'line': b'Copying ../../build/camera_pipelines/camera_pipelines.egg-info to /home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines-0.0.0-py3.10.egg-info\n'}
+[6.064837] (camera_pipelines) StdoutLine: {'line': b'running install_scripts\n'}
+[6.076209] (-) TimerEvent: {}
+[6.081848] (teleop_forklift_control) StdoutLine: {'line': b'running egg_info\n'}
+[6.086388] (teleop_forklift_control) StdoutLine: {'line': b'writing ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/PKG-INFO\n'}
+[6.087765] (teleop_forklift_control) StdoutLine: {'line': b'writing dependency_links to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/dependency_links.txt\n'}
+[6.088901] (teleop_forklift_control) StdoutLine: {'line': b'writing entry points to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/entry_points.txt\n'}
+[6.089956] (teleop_forklift_control) StdoutLine: {'line': b'writing requirements to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/requires.txt\n'}
+[6.092393] (teleop_forklift_control) StdoutLine: {'line': b'writing top-level names to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/top_level.txt\n'}
+[6.102109] (teleop_forklift_control) StdoutLine: {'line': b"reading manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'\n"}
+[6.106953] (teleop_forklift_control) StdoutLine: {'line': b"writing manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'\n"}
+[6.107872] (teleop_forklift_control) StdoutLine: {'line': b'running build\n'}
+[6.108405] (teleop_forklift_control) StdoutLine: {'line': b'running build_py\n'}
+[6.113509] (teleop_forklift_control) StdoutLine: {'line': b'running install\n'}
+[6.114864] (teleop_forklift_control) StdoutLine: {'line': b'running install_lib\n'}
+[6.124592] (teleop_forklift_control) StdoutLine: {'line': b'running install_data\n'}
+[6.125598] (teleop_forklift_control) StdoutLine: {'line': b'running install_egg_info\n'}
+[6.127308] (depthai_ros_driver) StderrLine: {'line': b'\x1b[31mCMake Error at /opt/ros/humble/share/ament_cmake_target_dependencies/cmake/ament_target_dependencies.cmake:77 (message):\n'}
+[6.128172] (depthai_ros_driver) StderrLine: {'line': b"  ament_target_dependencies() the passed package name 'camera_info_manager'\n"}
+[6.128742] (depthai_ros_driver) StderrLine: {'line': b'  was not found before\n'}
+[6.129253] (depthai_ros_driver) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[6.129785] (depthai_ros_driver) StderrLine: {'line': b'  CMakeLists.txt:83 (ament_target_dependencies)\n'}
+[6.130587] (depthai_ros_driver) StderrLine: {'line': b'\n'}
+[6.138052] (depthai_ros_driver) StderrLine: {'line': b'\x1b[0m\n'}
+[6.138791] (depthai_ros_driver) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[6.139691] (depthai_ros_driver) StdoutLine: {'line': b'See also "/home/ubuntu/ros2_ws/build/depthai_ros_driver/CMakeFiles/CMakeOutput.log".\n'}
+[6.141498] (teleop_forklift_control) StdoutLine: {'line': b"removing '/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info' (and everything under it)\n"}
+[6.142481] (teleop_forklift_control) StdoutLine: {'line': b'Copying ../../build/teleop_forklift_control/teleop_forklift_control.egg-info to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info\n'}
+[6.155073] (teleop_forklift_control) StdoutLine: {'line': b'running install_scripts\n'}
+[6.169279] (depthai_ros_driver) CommandEnded: {'returncode': 1}
+[6.171439] (camera_pipelines) StdoutLine: {'line': b"writing list of installed files to '/home/ubuntu/ros2_ws/build/camera_pipelines/install.log'\n"}
+[6.176659] (-) TimerEvent: {}
+[6.279840] (-) TimerEvent: {}
+[6.291286] (teleop_forklift_control) StdoutLine: {'line': b'Installing main script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control\n'}
+[6.297501] (teleop_forklift_control) StdoutLine: {'line': b"writing list of installed files to '/home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log'\n"}
+[6.334521] (depthai_ros_driver) JobEnded: {'identifier': 'depthai_ros_driver', 'rc': 1}
+[6.343139] (camera_pipelines) JobEnded: {'identifier': 'camera_pipelines', 'rc': 'SIGINT'}
+[6.380151] (-) TimerEvent: {}
+[6.423071] (teleop_forklift_control) JobEnded: {'identifier': 'teleop_forklift_control', 'rc': 'SIGINT'}
+[6.426711] (-) EventReactorShutdown: {}

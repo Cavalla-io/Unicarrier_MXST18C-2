@@ -1,0 +1,27 @@
+[4.313s] Invoking command in '/home/ubuntu/ros2_ws/src/teleop_forklift_control': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/teleop_forklift_control build --build-base /home/ubuntu/ros2_ws/build/teleop_forklift_control/build install --record /home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log --single-version-externally-managed install_data
+[5.296s] running egg_info
+[5.298s] writing ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/PKG-INFO
+[5.304s] writing dependency_links to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/dependency_links.txt
+[5.307s] writing entry points to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/entry_points.txt
+[5.308s] writing requirements to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/requires.txt
+[5.312s] writing top-level names to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/top_level.txt
+[5.313s] reading manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+[5.319s] writing manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+[5.321s] running build
+[5.321s] running build_py
+[5.325s] copying teleop_forklift_control/scripts/wheel_tracker_node.launch.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+[5.326s] running install
+[5.326s] running install_lib
+[5.332s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts/wheel_tracker_node.launch.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+[5.335s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts/wheel_tracker_node.launch.py to wheel_tracker_node.launch.cpython-310.pyc
+[5.340s] running install_data
+[5.341s] copying package.xml -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/teleop_forklift_control
+[5.343s] copying launch/forklift_teleop.launch.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/teleop_forklift_control/launch
+[5.343s] running install_egg_info
+[5.351s] removing '/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info' (and everything under it)
+[5.354s] Copying ../../build/teleop_forklift_control/teleop_forklift_control.egg-info to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info
+[5.361s] running install_scripts
+[5.457s] Installing main script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control
+[5.458s] Installing wheel_tracker script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control
+[5.469s] writing list of installed files to '/home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log'
+[5.674s] Invoked command in '/home/ubuntu/ros2_ws/src/teleop_forklift_control' returned '0': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/teleop_forklift_control build --build-base /home/ubuntu/ros2_ws/build/teleop_forklift_control/build install --record /home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log --single-version-externally-managed install_data

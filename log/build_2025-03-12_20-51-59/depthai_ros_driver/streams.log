@@ -1,0 +1,13 @@
+[1.300s] Invoking command in '/home/ubuntu/ros2_ws/build/depthai_ros_driver': /usr/bin/cmake --build /home/ubuntu/ros2_ws/build/depthai_ros_driver -- -j4 -l4
+[2.309s] [  2%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/utils.cpp.o[0m
+[2.350s] [  5%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/dai_nodes/sys_logger.cpp.o[0m
+[2.411s] [  8%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/dai_nodes/base_node.cpp.o[0m
+[2.412s] [  8%] Built target ament_cmake_python_copy_depthai_ros_driver
+[3.965s] running egg_info
+[3.969s] writing depthai_ros_driver.egg-info/PKG-INFO
+[3.979s] writing dependency_links to depthai_ros_driver.egg-info/dependency_links.txt
+[3.981s] writing top-level names to depthai_ros_driver.egg-info/top_level.txt
+[4.027s] reading manifest file 'depthai_ros_driver.egg-info/SOURCES.txt'
+[4.035s] writing manifest file 'depthai_ros_driver.egg-info/SOURCES.txt'
+[4.328s] [  8%] Built target ament_cmake_python_build_depthai_ros_driver_egg
+[4.362s] [ 11%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/dai_nodes/sensors/img_pub.cpp.o[0m

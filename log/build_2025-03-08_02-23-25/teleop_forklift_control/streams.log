@@ -1,0 +1,25 @@
+[3.204s] Invoking command in '/home/ubuntu/ros2_ws/build/teleop_forklift_control': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ubuntu/ros2_ws/build/teleop_forklift_control/build --no-deps symlink_data
+[4.310s] running develop
+[5.001s] running egg_info
+[5.002s] creating teleop_forklift_control.egg-info
+[5.002s] writing teleop_forklift_control.egg-info/PKG-INFO
+[5.003s] writing dependency_links to teleop_forklift_control.egg-info/dependency_links.txt
+[5.004s] writing entry points to teleop_forklift_control.egg-info/entry_points.txt
+[5.004s] writing requirements to teleop_forklift_control.egg-info/requires.txt
+[5.005s] writing top-level names to teleop_forklift_control.egg-info/top_level.txt
+[5.005s] writing manifest file 'teleop_forklift_control.egg-info/SOURCES.txt'
+[5.013s] reading manifest file 'teleop_forklift_control.egg-info/SOURCES.txt'
+[5.015s] writing manifest file 'teleop_forklift_control.egg-info/SOURCES.txt'
+[5.021s] running build_ext
+[5.022s] Creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop-forklift-control.egg-link (link to .)
+[5.025s] Installing main script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control
+[5.026s] 
+[5.027s] Installed /home/ubuntu/ros2_ws/build/teleop_forklift_control
+[5.027s] running symlink_data
+[5.028s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/ament_index
+[5.028s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/ament_index/resource_index
+[5.030s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/ament_index/resource_index/packages
+[5.030s] symbolically linking /home/ubuntu/ros2_ws/build/teleop_forklift_control/resource/teleop_forklift_control -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/ament_index/resource_index/packages
+[5.031s] symbolically linking /home/ubuntu/ros2_ws/build/teleop_forklift_control/package.xml -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/teleop_forklift_control
+[5.032s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/teleop_forklift_control/launch
+[5.155s] Invoked command in '/home/ubuntu/ros2_ws/build/teleop_forklift_control' returned '0': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ubuntu/ros2_ws/build/teleop_forklift_control/build --no-deps symlink_data

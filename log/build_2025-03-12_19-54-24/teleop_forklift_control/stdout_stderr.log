@@ -1,0 +1,54 @@
+running develop
+Removing /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop-forklift-control.egg-link (link to .)
+running egg_info
+writing ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/PKG-INFO
+writing dependency_links to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/dependency_links.txt
+writing entry points to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/entry_points.txt
+writing requirements to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/requires.txt
+writing top-level names to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/top_level.txt
+reading manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+writing manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build
+creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib
+creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control
+copying teleop_forklift_control/__init__.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control
+creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+copying teleop_forklift_control/controller_depends/drive_controller.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+copying teleop_forklift_control/controller_depends/__init__.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+copying teleop_forklift_control/controller_depends/input_listener.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+copying teleop_forklift_control/controller_depends/wheel_tracker.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+copying teleop_forklift_control/controller_depends/lift_controller.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+copying teleop_forklift_control/scripts/__init__.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+copying teleop_forklift_control/scripts/main.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+running install
+running install_lib
+creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control
+creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/drive_controller.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/__init__.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/input_listener.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/wheel_tracker.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/lift_controller.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/__init__.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control
+creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts/__init__.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts/main.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/drive_controller.py to drive_controller.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/input_listener.py to input_listener.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/wheel_tracker.py to wheel_tracker.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/lift_controller.py to lift_controller.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts/main.py to main.cpython-310.pyc
+running install_data
+copying resource/teleop_forklift_control -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/ament_index/resource_index/packages
+copying package.xml -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/teleop_forklift_control
+running install_egg_info
+Copying ../../build/teleop_forklift_control/teleop_forklift_control.egg-info to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info
+running install_scripts
+Installing main script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control
+writing list of installed files to '/home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log'

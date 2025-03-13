@@ -1,0 +1,6 @@
+[0.069s] Invoking command in '/home/ubuntu/ros2_ws/build/depthai_ros_driver': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/ubuntu/ros2_ws/build/depthai_ros_driver -- -j4 -l4
+[0.836s] [  2%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/utils.cpp.o[0m
+[0.840s] [  5%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/dai_nodes/base_node.cpp.o[0m
+[0.846s] [  8%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/dai_nodes/sys_logger.cpp.o[0m
+[0.860s] [  8%] Built target ament_cmake_python_copy_depthai_ros_driver
+[0.894s] [ 11%] [32mBuilding CXX object CMakeFiles/depthai_ros_driver_common.dir/src/dai_nodes/sensors/img_pub.cpp.o[0m

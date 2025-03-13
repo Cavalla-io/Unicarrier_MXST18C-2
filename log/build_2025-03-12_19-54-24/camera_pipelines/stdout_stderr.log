@@ -1,0 +1,31 @@
+running egg_info
+creating ../../build/camera_pipelines/camera_pipelines.egg-info
+writing ../../build/camera_pipelines/camera_pipelines.egg-info/PKG-INFO
+writing dependency_links to ../../build/camera_pipelines/camera_pipelines.egg-info/dependency_links.txt
+writing entry points to ../../build/camera_pipelines/camera_pipelines.egg-info/entry_points.txt
+writing requirements to ../../build/camera_pipelines/camera_pipelines.egg-info/requires.txt
+writing top-level names to ../../build/camera_pipelines/camera_pipelines.egg-info/top_level.txt
+writing manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'
+reading manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'
+writing manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ubuntu/ros2_ws/build/camera_pipelines/build
+creating /home/ubuntu/ros2_ws/build/camera_pipelines/build/lib
+creating /home/ubuntu/ros2_ws/build/camera_pipelines/build/lib/camera_pipelines
+copying camera_pipelines/__init__.py -> /home/ubuntu/ros2_ws/build/camera_pipelines/build/lib/camera_pipelines
+running install
+running install_lib
+creating /home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines
+copying /home/ubuntu/ros2_ws/build/camera_pipelines/build/lib/camera_pipelines/__init__.py -> /home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines
+byte-compiling /home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/ubuntu/ros2_ws/install/camera_pipelines/share/ament_index
+creating /home/ubuntu/ros2_ws/install/camera_pipelines/share/ament_index/resource_index
+creating /home/ubuntu/ros2_ws/install/camera_pipelines/share/ament_index/resource_index/packages
+copying resource/camera_pipelines -> /home/ubuntu/ros2_ws/install/camera_pipelines/share/ament_index/resource_index/packages
+copying package.xml -> /home/ubuntu/ros2_ws/install/camera_pipelines/share/camera_pipelines
+running install_egg_info
+Copying ../../build/camera_pipelines/camera_pipelines.egg-info to /home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/ubuntu/ros2_ws/build/camera_pipelines/install.log'

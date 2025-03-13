@@ -1,0 +1,20 @@
+[4.799s] Invoking command in '/home/ubuntu/ros2_ws/src/camera_pipelines': PYTHONPATH=/home/ubuntu/ros2_ws/build/camera_pipelines/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/camera_pipelines build --build-base /home/ubuntu/ros2_ws/build/camera_pipelines/build install --record /home/ubuntu/ros2_ws/build/camera_pipelines/install.log --single-version-externally-managed install_data
+[6.137s] running egg_info
+[6.140s] writing ../../build/camera_pipelines/camera_pipelines.egg-info/PKG-INFO
+[6.165s] writing dependency_links to ../../build/camera_pipelines/camera_pipelines.egg-info/dependency_links.txt
+[6.188s] writing entry points to ../../build/camera_pipelines/camera_pipelines.egg-info/entry_points.txt
+[6.221s] writing requirements to ../../build/camera_pipelines/camera_pipelines.egg-info/requires.txt
+[6.239s] writing top-level names to ../../build/camera_pipelines/camera_pipelines.egg-info/top_level.txt
+[6.267s] reading manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'
+[6.273s] writing manifest file '../../build/camera_pipelines/camera_pipelines.egg-info/SOURCES.txt'
+[6.292s] running build
+[6.293s] running build_py
+[6.293s] running install
+[6.295s] running install_lib
+[6.300s] running install_data
+[6.300s] running install_egg_info
+[6.313s] removing '/home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines-0.0.0-py3.10.egg-info' (and everything under it)
+[6.314s] Copying ../../build/camera_pipelines/camera_pipelines.egg-info to /home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages/camera_pipelines-0.0.0-py3.10.egg-info
+[6.321s] running install_scripts
+[6.409s] writing list of installed files to '/home/ubuntu/ros2_ws/build/camera_pipelines/install.log'
+[6.586s] Invoked command in '/home/ubuntu/ros2_ws/src/camera_pipelines' returned '0': PYTHONPATH=/home/ubuntu/ros2_ws/build/camera_pipelines/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/camera_pipelines/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/camera_pipelines build --build-base /home/ubuntu/ros2_ws/build/camera_pipelines/build install --record /home/ubuntu/ros2_ws/build/camera_pipelines/install.log --single-version-externally-managed install_data

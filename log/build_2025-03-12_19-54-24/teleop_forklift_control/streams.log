@@ -1,0 +1,58 @@
+[5.248s] Invoking command in '/home/ubuntu/ros2_ws/build/teleop_forklift_control': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/ubuntu/ros2_ws/build/teleop_forklift_control/build
+[6.674s] running develop
+[7.614s] Removing /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop-forklift-control.egg-link (link to .)
+[7.746s] Invoked command in '/home/ubuntu/ros2_ws/build/teleop_forklift_control' returned '0': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/ubuntu/ros2_ws/build/teleop_forklift_control/build
+[7.754s] Invoking command in '/home/ubuntu/ros2_ws/src/teleop_forklift_control': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/teleop_forklift_control build --build-base /home/ubuntu/ros2_ws/build/teleop_forklift_control/build install --record /home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log --single-version-externally-managed install_data --force
+[8.916s] running egg_info
+[8.919s] writing ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/PKG-INFO
+[8.920s] writing dependency_links to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/dependency_links.txt
+[8.922s] writing entry points to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/entry_points.txt
+[8.923s] writing requirements to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/requires.txt
+[8.923s] writing top-level names to ../../build/teleop_forklift_control/teleop_forklift_control.egg-info/top_level.txt
+[8.933s] reading manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+[8.937s] writing manifest file '../../build/teleop_forklift_control/teleop_forklift_control.egg-info/SOURCES.txt'
+[8.938s] running build
+[8.939s] running build_py
+[8.940s] creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build
+[8.940s] creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib
+[8.941s] creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control
+[8.942s] copying teleop_forklift_control/__init__.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control
+[8.943s] creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+[8.943s] copying teleop_forklift_control/controller_depends/drive_controller.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+[8.944s] copying teleop_forklift_control/controller_depends/__init__.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+[8.945s] copying teleop_forklift_control/controller_depends/input_listener.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+[8.945s] copying teleop_forklift_control/controller_depends/wheel_tracker.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+[8.946s] copying teleop_forklift_control/controller_depends/lift_controller.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends
+[8.947s] creating /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+[8.948s] copying teleop_forklift_control/scripts/__init__.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+[8.948s] copying teleop_forklift_control/scripts/main.py -> /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts
+[8.951s] running install
+[8.952s] running install_lib
+[8.955s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control
+[8.956s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+[8.956s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/drive_controller.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+[8.957s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/__init__.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+[8.958s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/input_listener.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+[8.961s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/wheel_tracker.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+[8.962s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/controller_depends/lift_controller.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends
+[8.963s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/__init__.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control
+[8.964s] creating /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+[8.964s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts/__init__.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+[8.965s] copying /home/ubuntu/ros2_ws/build/teleop_forklift_control/build/lib/teleop_forklift_control/scripts/main.py -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts
+[8.967s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/drive_controller.py to drive_controller.cpython-310.pyc
+[8.969s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/__init__.py to __init__.cpython-310.pyc
+[8.971s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/input_listener.py to input_listener.cpython-310.pyc
+[8.974s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/wheel_tracker.py to wheel_tracker.cpython-310.pyc
+[8.976s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/controller_depends/lift_controller.py to lift_controller.cpython-310.pyc
+[8.979s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/__init__.py to __init__.cpython-310.pyc
+[8.981s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts/__init__.py to __init__.cpython-310.pyc
+[8.982s] byte-compiling /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control/scripts/main.py to main.cpython-310.pyc
+[8.984s] running install_data
+[8.985s] copying resource/teleop_forklift_control -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/ament_index/resource_index/packages
+[8.986s] copying package.xml -> /home/ubuntu/ros2_ws/install/teleop_forklift_control/share/teleop_forklift_control
+[8.987s] running install_egg_info
+[8.996s] Copying ../../build/teleop_forklift_control/teleop_forklift_control.egg-info to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages/teleop_forklift_control-0.0.1-py3.10.egg-info
+[9.003s] running install_scripts
+[9.091s] Installing main script to /home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/teleop_forklift_control
+[9.094s] writing list of installed files to '/home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log'
+[9.223s] Invoked command in '/home/ubuntu/ros2_ws/src/teleop_forklift_control' returned '0': PYTHONPATH=/home/ubuntu/ros2_ws/build/teleop_forklift_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ubuntu/ros2_ws/install/teleop_forklift_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/teleop_forklift_control build --build-base /home/ubuntu/ros2_ws/build/teleop_forklift_control/build install --record /home/ubuntu/ros2_ws/build/teleop_forklift_control/install.log --single-version-externally-managed install_data --force
