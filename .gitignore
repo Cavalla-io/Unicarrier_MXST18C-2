@@ -1,0 +1,49 @@
+# ROS2 build artifacts
+build/
+install/
+log/
+.colcon/
+
+# ROS2 dependencies
+ros_ws/build/
+ros_ws/install/
+ros_ws/log/
+
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+cmake_install.cmake
+CMakeFiles/
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# VSCode settings (optional)
+.vscode/
+
+# JetBrains IDE settings (CLion, PyCharm, etc.)
+.idea/
+*.iml
+
+# ROS2 launch logs and temporary files
+ros2_ws/.colcon/
+ros2_ws/install/
+ros2_ws/build/
+ros2_ws/log/
+
+# Other system-generated files
+.DS_Store
+Thumbs.db
+
+# Ignoring generated URDF or meshes
+*.xacro~
+*.urdf~
+*.stl~
+*.dae~
+
+# Ignore swap files
+*~
+*.swp
+*.swo
