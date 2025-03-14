@@ -5,7 +5,7 @@ import time
 class DriveController:
     def __init__(self, listener,
                  steering_port='/dev/ttyUSB0', throttle_port='/dev/ttyUSB1',
-                 baudrate=115200):
+                 baudrate=230400):
         # Save the shared input listener.
         self.listener = listener
 
