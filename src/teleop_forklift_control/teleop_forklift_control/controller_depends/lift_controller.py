@@ -39,6 +39,9 @@ class LiftController:
             current_state = 0x00
             current_action = 0xF8 if self.lowering_toggle else 0xFF
             self.lowering_toggle = not self.lowering_toggle
+        else:
+            current_state = 0x00
+            current_action = 0x00
         # Process sideshift commands:
         if cmd["sideshift"] == 'L':
             sideshift_byte_4 = 0x01
