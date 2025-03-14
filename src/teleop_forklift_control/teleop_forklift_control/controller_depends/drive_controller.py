@@ -5,7 +5,7 @@ import time
 class DriveController:
     def __init__(self, listener,
                  steering_port='/dev/ttyUSB0', throttle_port='/dev/ttyUSB1',
-                 baudrate=230400):
+                 baudrate=115200):
         # Save the shared input listener.
         self.listener = listener
 
@@ -22,6 +22,9 @@ class DriveController:
 
         # Initialize the state variable for steering.
         self.last_steering = None  # Can be 'L', 'R', or None
+        
+        # Track the last time we sent a throttle command
+        self.last_throttle_time = 0
 
     def update(self):
         # Get the drive command from the shared listener.
@@ -29,10 +32,16 @@ class DriveController:
         drive_cmd = self.listener.get_drive_command()
 
         # Handle throttle
+        current_time = time.time()
         if drive_cmd.get("throttle", False):
-            self.throttle_ser.write(b'p')  # Engage throttle (move DACs to 2.5V)
+            # Always send command immediately if it's been more than 100ms OR if this is a new button press
+            if current_time - self.last_throttle_time >= 0.1 or self.last_throttle_time == 0:
+                self.throttle_ser.write(b'p')  # Engage throttle (move DACs to 2.5V)
+                self.last_throttle_time = current_time
         else:
             self.throttle_ser.write(b's')  # Disengage throttle (return to normal voltage)
+            # Reset the timer when button is released
+            self.last_throttle_time = 0
 
         # Determine current steering command from the listener.
         current_steering = drive_cmd.get("steering", None)
