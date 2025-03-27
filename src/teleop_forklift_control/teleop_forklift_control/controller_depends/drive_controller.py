@@ -28,20 +28,23 @@ class DriveController:
 
     def update(self):
         # Get the drive command from the shared listener.
-        # The listener returns a dictionary with keys "throttle" (boolean) and "steering" (either 'L', 'R', or None)
+        # The listener now returns a dictionary with "throttle" (float 0-1) and "steering" ('L', 'R', or None)
         drive_cmd = self.listener.get_drive_command()
 
-        # Handle throttle
+        # Handle throttle - now using analog values
         current_time = time.time()
-        if drive_cmd.get("throttle", False):
-            # Always send command immediately if it's been more than 100ms OR if this is a new button press
-            if current_time - self.last_throttle_time >= 0.1 or self.last_throttle_time == 0:
-                self.throttle_ser.write(b'p')  # Engage throttle (move DACs to 2.5V)
-                self.last_throttle_time = current_time
-        else:
-            self.throttle_ser.write(b's')  # Disengage throttle (return to normal voltage)
-            # Reset the timer when button is released
-            self.last_throttle_time = 0
+        throttle_value = drive_cmd.get("throttle", 0.0)
+        
+        # Send command if it's been more than 100ms AND throttle is above threshold
+        if current_time - self.last_throttle_time >= 0.1:
+            if throttle_value > 0.01:
+                # Format: 't' followed by float value (e.g., "t0.50")
+                throttle_command = f't{throttle_value:.2f}'.encode()
+                self.throttle_ser.write(throttle_command)
+            else:
+                # Send zero throttle
+                self.throttle_ser.write(b't0.00')
+            self.last_throttle_time = current_time
 
         # Determine current steering command from the listener.
         current_steering = drive_cmd.get("steering", None)
@@ -63,6 +66,7 @@ class DriveController:
         else:
             # No steering key is pressed: hold the current voltage and reset last steering.
             self.steering_ser.write(b's')
+
     def close(self):
         self.steering_ser.close()
         self.throttle_ser.close()

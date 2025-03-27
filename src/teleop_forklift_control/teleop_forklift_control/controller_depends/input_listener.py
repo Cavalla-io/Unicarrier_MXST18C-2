@@ -41,8 +41,14 @@ class InputListener:
     def joy_callback(self, msg: Joy):
         with self._lock:
             # ----- Drive Command Mapping -----
-            # For drive throttle, assume button 0 (A) is used.
-            self.drive_command["throttle"] = (msg.buttons[0] == 1) if len(msg.buttons) > 0 else False
+            # For drive throttle, using axis 2 (joystick throttle)
+            # Note: The throttle axis goes from -1 (full throttle) to 0 (rest)
+            # TODO: This direction should ideally be reversed in forklift_teleop_web
+            if len(msg.axes) > 2:
+                # Convert from [-1, 0] to [0, 1] range for throttle intensity
+                self.drive_command["throttle"] = (-msg.axes[2] if msg.axes[2] < 0 else 0)
+            else:
+                self.drive_command["throttle"] = 0
 
             # For drive steering, assume the left analog horizontal axis (axes[0]).
             if len(msg.axes) > 0:
