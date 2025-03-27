@@ -38,12 +38,12 @@ class DriveController:
         # Send command if it's been more than 100ms AND throttle is above threshold
         if current_time - self.last_throttle_time >= 0.1:
             if throttle_value > 0.01:
-                # Format: 't' followed by float value (e.g., "t0.50")
-                throttle_command = f't{throttle_value:.2f}'.encode()
+                # Format: float value (e.g., "0.50")
+                throttle_command = f'{throttle_value:.2f}'.encode()
                 self.throttle_ser.write(throttle_command)
             else:
                 # Send zero throttle
-                self.throttle_ser.write(b't0.00')
+                self.throttle_ser.write(b'0.00')
             self.last_throttle_time = current_time
 
         # Determine current steering command from the listener.
