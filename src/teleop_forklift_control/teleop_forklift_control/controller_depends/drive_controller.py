@@ -34,13 +34,12 @@ class DriveController:
         # Handle throttle - now using analog values
         current_time = time.time()
         throttle_value = drive_cmd.get("throttle", 0.0)
+        print(f"Throttle value: {throttle_value}")
         
         # Send command if it's been more than 100ms AND throttle is above threshold
-        if current_time - self.last_throttle_time >= 0.1:
+        if current_time - self.last_throttle_time >= 0.1 or self.last_throttle_time == 0:
             if throttle_value > 0.01:
-                # Format: float value (e.g., "0.50")
-                throttle_command = f'{throttle_value:.2f}'.encode()
-                self.throttle_ser.write(throttle_command)
+                self.throttle_ser.write(throttle_value)
             else:
                 # Send zero throttle
                 self.throttle_ser.write(b'0.00')
