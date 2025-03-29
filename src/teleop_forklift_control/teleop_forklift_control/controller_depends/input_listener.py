@@ -13,7 +13,7 @@ class InputListener:
         self.drive_command = {"throttle": 0.00, "steering": None}
         # Lift commands: gas, lift, lower, sideshift, drive, and tilt.
         self.lift_command = {"gas": False, "lift": False, "lower": False, "sideshift": None,
-                             "drive": "NEUTRAL", "tilt": None}
+                             "drive": "NEUTRAL", "tilt": None, "slow_lower": False}
         # Create subscriptions for Joy and Twist topics.
         self.joy_subscriber = self.node.create_subscription(
             Joy,
@@ -77,6 +77,9 @@ class InputListener:
             if len(msg.buttons) >= 8:
                 self.lift_command["lift"] = (msg.buttons[12] == 1)
                 self.lift_command["lower"] = (msg.buttons[13] == 1)
+                
+                # Check button 4 for slow lowering mode
+                self.lift_command["fast_lower"] = (msg.buttons[4] == 1)
                 
                 # Drive command for lift using buttons 1 and 3
                 if msg.buttons[1] == 1:

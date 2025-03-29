@@ -12,6 +12,7 @@ class LiftController:
             raise
         self.counter = 0
         self.lowering_toggle = True
+        self.lowering_speed = 0xF9  # Default lowering speed
 
     def send_can_message(self, arbitration_id, data):
         msg = can.Message(arbitration_id=arbitration_id, data=bytearray(data), is_extended_id=False)
@@ -37,7 +38,9 @@ class LiftController:
             current_action = 0x07
         elif cmd["lower"]:
             current_state = 0x00
-            current_action = 0xF8 if self.lowering_toggle else 0xFF
+            # Update lowering speed from input listener
+            self.lowering_speed = 0xF8 if cmd["fast_lower"] else 0xF9
+            current_action = self.lowering_speed if self.lowering_toggle else 0xFF
             self.lowering_toggle = not self.lowering_toggle
         else:
             current_state = 0x00
