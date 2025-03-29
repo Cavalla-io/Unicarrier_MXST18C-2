@@ -9,6 +9,9 @@ class DriveController:
         # Save the shared input listener.
         self.listener = listener
 
+        # Initialize throttle value
+        self.throttle_value = 0.0
+
         # Open Serial Connections for steering and throttle controllers.
         try:
             self.steering_ser = serial.Serial(steering_port, baudrate, timeout=1)
@@ -33,16 +36,17 @@ class DriveController:
 
         # Handle throttle - now using analog values
         current_time = time.time()
-        throttle_value = drive_cmd.get("throttle", 0.0)
-        print(f"Throttle value: {throttle_value}")
+        self.throttle_value = drive_cmd.get("throttle", 0.0)
         
         # Send command if it's been more than 100ms AND throttle is above threshold
         if current_time - self.last_throttle_time >= 0.1 or self.last_throttle_time == 0:
-            if throttle_value > 0.01:
-                self.throttle_ser.write(throttle_value)
+            if self.throttle_value > 0.01:
+                data = (str(self.throttle_value) + "\n").encode('utf-8')
+                self.throttle_ser.write(data)
             else:
                 # Send zero throttle
-                self.throttle_ser.write(b'0.00')
+                data = (str(0.00) + "\n").encode('utf-8')
+                self.throttle_ser.write(data)
             self.last_throttle_time = current_time
 
         # Determine current steering command from the listener.
@@ -65,6 +69,8 @@ class DriveController:
         else:
             # No steering key is pressed: hold the current voltage and reset last steering.
             self.steering_ser.write(b's')
+
+        return self.throttle_value
 
     def close(self):
         self.steering_ser.close()

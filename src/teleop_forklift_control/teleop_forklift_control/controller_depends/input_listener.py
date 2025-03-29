@@ -9,8 +9,8 @@ class InputListener:
     def __init__(self, parent_node):
         self.node = parent_node  # Store a reference to the parent node
         self._lock = threading.Lock()
-        # Drive commands: throttle (boolean), steering direction: 'L', 'R', or None.
-        self.drive_command = {"throttle": False, "steering": None}
+        # Drive commands: throttle (float), steering direction: 'L', 'R', or None.
+        self.drive_command = {"throttle": 0.00, "steering": None}
         # Lift commands: gas, lift, lower, sideshift, drive, and tilt.
         self.lift_command = {"gas": False, "lift": False, "lower": False, "sideshift": None,
                              "drive": "NEUTRAL", "tilt": None}
@@ -27,6 +27,10 @@ class InputListener:
             10)
         # (Optional) A flag if you need to run a loop in a separate thread.
         self.running = True
+        
+        # Add a counter for throttle logging
+        self.throttle_log_counter = 0
+        self.log_interval = 20  # Log every 20 joy messages (adjust as needed)
         
         self.node.get_logger().info("Input listener initialized")
 
@@ -45,7 +49,14 @@ class InputListener:
             # Note: The throttle axis goes from -1 (full throttle) to 0 (rest)
             # TODO: This direction should ideally be reversed in forklift_teleop_web
                 # Convert from [-1, 0] to [0, 1] range for throttle intensity
-            self.drive_command["throttle"] = (-msg.axes[2] if msg.axes[2] < 0 else 0)
+            throttle_value = -msg.axes[2] if msg.axes[2] < 0 else 0
+            self.drive_command["throttle"] = throttle_value
+            
+            # Log throttle value periodically
+            self.throttle_log_counter += 1
+            if self.throttle_log_counter >= self.log_interval:
+                self.node.get_logger().info(f"Input Listener - Current throttle value: {throttle_value:.3f}")
+                self.throttle_log_counter = 0
             
             # For drive steering, assume the left analog horizontal axis (axes[0]).
             if len(msg.axes) > 0:
