@@ -155,10 +155,6 @@ If you encounter issues:
    sudo systemctl status can-setup.service  # Check if the service is running
    ```
 
-## License
-
-[Specify license information here]
-
 ## Contributors
 
 [List contributors here] 
