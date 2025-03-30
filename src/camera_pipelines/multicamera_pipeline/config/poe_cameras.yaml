@@ -1,0 +1,34 @@
+# Configuration for PoE cameras with extreme bandwidth optimization
+/oak_d_pro_1:
+  ros__parameters:
+    camera:
+      i_mx_id: 18443010D1DEE7F400
+      i_nn_type: NONE
+      i_pipeline_type: RGB
+      i_enable_imu: false
+      i_usb_speed: LOW  # Use lowest USB speed
+    rgb:
+      i_fps: 10.0
+      i_width: 1280
+      i_height: 720
+      i_output_isp: false
+      i_low_bandwidth: true
+      i_low_quality: true
+      i_preview_size: 300
+
+/oak_d_pro_2:
+  ros__parameters:
+    camera:
+      i_mx_id: 18443010C142E7F400
+      i_nn_type: NONE
+      i_pipeline_type: RGB
+      i_enable_imu: false
+      i_usb_speed: LOW  # Use lowest USB speed
+    rgb:
+      i_fps: 10.0
+      i_width: 1280
+      i_height: 720
+      i_output_isp: false
+      i_low_bandwidth: true
+      i_low_quality: true
+      i_preview_size: 300 

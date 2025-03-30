@@ -1,0 +1,17 @@
+# Minimal configuration with just camera IDs
+/oak_d_pro_1:
+  ros__parameters:
+    camera:
+      i_mx_id: 18443010D1DEE7F400
+      i_nn_type: NONE
+    stereo:
+      i_disable_depth: true
+
+/oak_d_pro_2:
+  ros__parameters:
+    camera:
+      i_mx_id: 18443010C142E7F400
+      i_nn_type: NONE
+    stereo:
+      i_disable_depth: true
+
