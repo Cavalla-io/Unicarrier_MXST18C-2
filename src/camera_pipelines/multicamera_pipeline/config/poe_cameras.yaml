@@ -1,8 +1,8 @@
 # Configuration for PoE cameras with extreme bandwidth optimization
-/oak_d_pro_1:
+/front_camera:
   ros__parameters:
     camera:
-      i_mx_id: 18443010D1DEE7F400
+      i_mx_id: 18443010C142E7F400
       i_nn_type: NONE
       i_pipeline_type: RGB
       i_enable_imu: false
@@ -16,10 +16,10 @@
       i_low_quality: true
       i_preview_size: 300
 
-/oak_d_pro_2:
+/fork_camera:
   ros__parameters:
     camera:
-      i_mx_id: 18443010C142E7F400
+      i_mx_id: 18443010D1DEE7F400
       i_nn_type: NONE
       i_pipeline_type: RGB
       i_enable_imu: false

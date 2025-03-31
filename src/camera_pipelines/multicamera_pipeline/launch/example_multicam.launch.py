@@ -19,7 +19,7 @@ def launch_setup(context, *args, **kwargs):
     params_file = os.path.join(multicamera_prefix, "config", "poe_cameras.yaml")
     
     # Define our two OAK-D Pro cameras
-    cams = ["oak_d_pro_1", "oak_d_pro_2"]
+    cams = ["front_camera", "fork_camera"]
     nodes = []
     i = 0.0
     
