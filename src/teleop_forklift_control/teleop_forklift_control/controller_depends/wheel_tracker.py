@@ -33,7 +33,7 @@ def main():
         print("Error initializing CAN bus:", e)
         return
 
-    print(f"Listening for CAN frame 0x{TARGET_FRAME_ID:X} on channel {CAN_CHANNEL}...")
+    # print(f"Listening for CAN frame 0x{TARGET_FRAME_ID:X} on channel {CAN_CHANNEL}...")
 
     while True:
         try:
@@ -45,7 +45,7 @@ def main():
                 # Assuming the encoder value is in the first byte of the data payload.
                 raw_value = message.data[3]
                 angle = translate_encoder_to_angle(raw_value)
-                print(f"Raw: 0x{raw_value:02X} -> Angle: {angle:.2f} degrees")
+                # print(f"Raw: 0x{raw_value:02X} -> Angle: {angle:.2f} degrees")
         except KeyboardInterrupt:
             print("Exiting...")
             break

@@ -139,7 +139,7 @@ class WheelTrackerNode(Node):
             self.log_counter += 1
             if self.log_counter >= 50:  # 50 * 0.1s = 5s
                 mode_str = "[SIM]" if self.sim_mode else "[CAN]"
-                self.get_logger().info(f"{mode_str} Current wheel angle: {angle:.2f} degrees (Raw: 0x{raw:02X})")
+                # self.get_logger().info(f"{mode_str} Current wheel angle: {angle:.2f} degrees (Raw: 0x{raw:02X})")
                 self.log_counter = 0
         else:
             self.log_counter = 0
