@@ -2,33 +2,89 @@
 /front_camera:
   ros__parameters:
     camera:
-      i_mx_id: 18443010C142E7F400
+      # Camera at 192.168.2.30 with MXID 18443010C142E7F400
+      i_mx_id: 18443010C142E7F400  # Using MX ID for reliable identification
+      # i_ip: "192.168.2.30"  # IP can be unreliable, using MX ID is better
+      i_ip: ""  # Using auto-discovery is more reliable
       i_nn_type: NONE
-      i_pipeline_type: RGB
-      i_enable_imu: false
+      i_pipeline_type: RGB  # RGB-only pipeline (no stereo)
+      i_enable_imu: false  # Disable IMU
       i_usb_speed: LOW  # Use lowest USB speed
+      i_enable_diagnostics: false  # Disable diagnostic publishers
+      i_restart_on_diagnostics_error: true  # auto-restart on errors
+      i_publish_tf_from_calibration: false  # Disable TF publishing from calibration
+      i_tf_imu_from_descr: "false"  # Disable IMU TF frames from URDF
+    pipeline_gen:
+      i_enable_diagnostics: false  # Disable diagnostics at pipeline level
+      i_enable_imu: false  # Disable IMU at pipeline generation level
+      i_enable_sync: false  # Don't sync data (saves resources)
+    imu:
+      i_publish_topic: false  # Don't publish IMU topic
     rgb:
       i_fps: 10.0
       i_width: 1280
       i_height: 720
       i_output_isp: false
       i_low_bandwidth: true
-      i_low_quality: true
+      i_low_quality: false
       i_preview_size: 300
+      i_rectify: false  # Disable image rectification
+      i_publish_compressed: false # Don't enable compressed image publishing
+      i_low_bandwidth_quality: 80  # Set compression quality (0-100)
+      i_max_q_size: 2  # Reduce queue size for lower latency/memory usage
+      i_interleaved: false  # Use non-interleaved format
+    left:
+      i_disable_node: true  # Completely disable the left camera node
+      i_publish_topic: false  # Don't publish left camera topic
+    right:
+      i_disable_node: true  # Completely disable the right camera node
+      i_publish_topic: false  # Don't publish right camera topic
+    stereo:
+      i_publish_topic: false  # Don't publish stereo topic
+      i_publish_left_rect: false  # Don't publish rectified left camera
+      i_publish_right_rect: false  # Don't publish rectified right camera
 
 /fork_camera:
   ros__parameters:
     camera:
-      i_mx_id: 18443010D1DEE7F400
+      # Camera at 192.168.2.25 with MXID 18443010D1DEE7F400
+      # Auto-discovery works better than specifying IP directly
+      # i_mx_id: 18443010D1DEE7F400  # Don't specify MX ID to allow auto-discovery
+      i_ip: ""  # Empty to force auto-discovery - this worked!
       i_nn_type: NONE
-      i_pipeline_type: RGB
-      i_enable_imu: false
+      i_pipeline_type: RGB  # RGB-only pipeline (no stereo)
+      i_enable_imu: false  # Disable IMU
       i_usb_speed: LOW  # Use lowest USB speed
+      i_enable_diagnostics: false  # Disable diagnostic publishers
+      i_restart_on_diagnostics_error: false  # Don't auto-restart on errors
+      i_publish_tf_from_calibration: false  # Disable TF publishing from calibration
+      i_tf_imu_from_descr: "false"  # Disable IMU TF frames from URDF
+    pipeline_gen:
+      i_enable_diagnostics: false  # Disable diagnostics at pipeline level
+      i_enable_imu: false  # Disable IMU at pipeline generation level
+      i_enable_sync: false  # Don't sync data (saves resources)
+    imu:
+      i_publish_topic: false  # Don't publish IMU topic
     rgb:
       i_fps: 10.0
       i_width: 1280
       i_height: 720
       i_output_isp: false
       i_low_bandwidth: true
-      i_low_quality: true
-      i_preview_size: 300 
+      i_low_quality: false
+      i_preview_size: 300
+      i_rectify: false  # Disable image rectification
+      i_publish_compressed: false  # Don't enable compressed image publishing
+      i_low_bandwidth_quality: 80  # Set compression quality (0-100)
+      i_max_q_size: 2  # Reduce queue size for lower latency/memory usage
+      i_interleaved: false  # Use non-interleaved format
+    left:
+      i_disable_node: true  # Completely disable the left camera node
+      i_publish_topic: false  # Don't publish left camera topic
+    right:
+      i_disable_node: true  # Completely disable the right camera node
+      i_publish_topic: false  # Don't publish right camera topic
+    stereo:
+      i_publish_topic: false  # Don't publish stereo topic
+      i_publish_left_rect: false  # Don't publish rectified left camera
+      i_publish_right_rect: false  # Don't publish rectified right camera

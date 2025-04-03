@@ -35,6 +35,12 @@ def launch_setup(context, *args, **kwargs):
                 "params_file": params_file,
                 "cam_pos_y": str(i),
                 "rectify_rgb": "false",  # Disable image rectification
+                "enable_depth": "false",  # Disable depth processing
+                "rsp_use_composition": "false",  # Disable composition
+                "use_rviz": "false",  # Disable RViz visualization
+                "camera_model": "OAK-D-PRO-POE-NO-IMU",  # Specify custom camera model without IMU/stereo
+                "imu_from_descr": "false",  # Disable IMU frames from URDF
+                "publish_tf_from_calibration": "false",  # Disable publishing TF from calibration
             }.items(),
         )
         nodes.append(node)
@@ -48,4 +54,4 @@ def generate_launch_description():
         [
             OpaqueFunction(function=launch_setup),
         ]
-    ) 
+    )
