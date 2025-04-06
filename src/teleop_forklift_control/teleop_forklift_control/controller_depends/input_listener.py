@@ -90,7 +90,7 @@ class InputListener:
             # Note: The throttle axis goes from -1 (full throttle) to 0 (rest)
             # TODO: This direction should ideally be reversed in forklift_teleop_web
                 # Convert from [-1, 0] to [0, 1] range for throttle intensity
-            throttle_value = -msg.axes[2] if msg.axes[2] < 0 else 0
+            throttle_value = -msg.axes[7] if msg.axes[7] < 0 else 0
             self.drive_command["throttle"] = throttle_value
             
             # Log throttle value periodically
