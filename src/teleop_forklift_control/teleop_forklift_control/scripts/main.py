@@ -3,6 +3,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 import time
+import os
+import glob
 
 # Import your controller classes
 from teleop_forklift_control.controller_depends.input_listener import InputListener
@@ -12,6 +14,9 @@ from teleop_forklift_control.controller_depends.lift_controller import LiftContr
 class CombinedControllerNode(Node):
     def __init__(self):
         super().__init__('main_controller_node')
+        
+        # Check available serial ports
+        self.check_available_serial_ports()
         
         # Create the shared input listener as a component within this node
         self.listener = InputListener(self)
@@ -25,6 +30,23 @@ class CombinedControllerNode(Node):
         self.lift_timer = self.create_timer(1/65, self.lift_update_callback)     # ~65 Hz
 
         self.get_logger().info("Combined controller node started.")
+        
+    def check_available_serial_ports(self):
+        """Check and log all available serial devices"""
+        # List all ttyUSB and ttyACM devices
+        usb_devices = glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*')
+        
+        if usb_devices:
+            self.get_logger().info(f"Available serial devices: {', '.join(usb_devices)}")
+        else:
+            self.get_logger().error("No USB serial devices found! Controllers will not work!")
+            
+        # Check permissions on devices
+        for device in usb_devices:
+            if os.access(device, os.R_OK | os.W_OK):
+                self.get_logger().info(f"Device {device} is readable and writable")
+            else:
+                self.get_logger().error(f"Permission issues with {device}! Need read/write access.")
 
     def drive_update_callback(self):
         self.drive_ctrl.update()

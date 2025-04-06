@@ -48,6 +48,16 @@ class WheelTracker:
         
         return relative_angle
 
+# Create a standalone function that wheel_tracker_node.py is trying to import
+# This maintains a global instance of WheelTracker to persist state between calls
+_global_wheel_tracker = WheelTracker()
+def translate_encoder_to_angle(raw_value):
+    """
+    Standalone function that delegates to the WheelTracker class method.
+    This allows importing this function directly from the module.
+    """
+    return _global_wheel_tracker.translate_encoder_to_angle(raw_value)
+
 def main():
     try:
         bus = can.interface.Bus(bustype='socketcan', channel=CAN_CHANNEL, bitrate=CAN_BITRATE)

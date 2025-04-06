@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import serial
 import time
+import logging
 
 class DriveController:
     def __init__(self, listener,
@@ -11,11 +12,18 @@ class DriveController:
 
         # Initialize throttle value
         self.throttle_value = 0.0
+        
+        # Setup logger
+        self.logger = logging.getLogger("drive_controller")
+        
+        # Print the actual ports being used
+        print(f"[DriveController] Initializing with steering_port={steering_port}, throttle_port={throttle_port}")
 
         # Open Serial Connections for steering and throttle controllers.
         try:
             self.steering_ser = serial.Serial(steering_port, baudrate, timeout=1)
             self.throttle_ser = serial.Serial(throttle_port, baudrate, timeout=1)
+            print(f"[DriveController] Successfully opened serial ports: {steering_port} and {throttle_port}")
         except Exception as e:
             print(f"Error opening serial ports: {e}")
             raise
@@ -28,6 +36,9 @@ class DriveController:
         
         # Track the last time we sent a throttle command
         self.last_throttle_time = 0
+        
+        # Counter for periodic logging
+        self.log_counter = 0
 
     def update(self):
         # Get the drive command from the shared listener.
@@ -38,15 +49,25 @@ class DriveController:
         current_time = time.time()
         self.throttle_value = drive_cmd.get("throttle", 0.0)
         
+        # Increment log counter
+        self.log_counter += 1
+        
+        # Periodic logging removed to reduce console spam
+        
         # Send command if it's been more than 100ms AND throttle is above threshold
         if current_time - self.last_throttle_time >= 0.1 or self.last_throttle_time == 0:
-            if self.throttle_value > 0.01:
+            # Lower threshold to 0.001 for more sensitivity
+            if self.throttle_value > 0.001:  # Reduced from 0.01
                 data = (str(self.throttle_value) + "\n").encode('utf-8')
                 self.throttle_ser.write(data)
+                # Always print when we send a non-zero throttle command
+                print(f"[DriveController] Sent throttle command: {self.throttle_value:.3f}")
             else:
                 # Send zero throttle
                 data = (str(0.00) + "\n").encode('utf-8')
                 self.throttle_ser.write(data)
+                if self.log_counter % 50 == 0:  # Reduced from every 10 to every 50
+                    print(f"[DriveController] Sent zero throttle command")
             self.last_throttle_time = current_time
 
         # Determine current steering command from the listener.
@@ -57,21 +78,29 @@ class DriveController:
             if self.last_steering is None:
                 # First key press—just engage the steering voltage update.
                 self.steering_ser.write(b'p')
+                print(f"[DriveController] Started steering {current_steering}: sent 'p'")
                 self.last_steering = current_steering
             elif self.last_steering != current_steering:
                 # Steering direction changed: send a reversal command then engage voltage update.
                 self.steering_ser.write(b'r')
                 self.steering_ser.write(b'p')
+                print(f"[DriveController] Changed steering from {self.last_steering} to {current_steering}: sent 'r','p'")
                 self.last_steering = current_steering
             else:
                 # Same key is being held: simply engage voltage update.
                 self.steering_ser.write(b'p')
+                if self.log_counter % 100 == 0:  # Much less frequent now
+                    print(f"[DriveController] Continuing steering {current_steering}: sent 'p'")
         else:
             # No steering key is pressed: hold the current voltage and reset last steering.
+            if self.last_steering is not None:
+                print(f"[DriveController] Stopped steering {self.last_steering}: sent 's'")
+                self.last_steering = None
             self.steering_ser.write(b's')
 
         return self.throttle_value
 
     def close(self):
+        print("[DriveController] Closing serial connections")
         self.steering_ser.close()
         self.throttle_ser.close()
