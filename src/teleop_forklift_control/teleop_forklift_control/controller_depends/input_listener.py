@@ -15,8 +15,7 @@ class InputListener:
         self.drive_command = {"throttle": 0.00, "steering": None}
         # Lift commands: lift, lower, sideshift, drive, and tilt.
         self.lift_command = {"lift": False, "lower": False, "sideshift": None,
-                             "drive": "NEUTRAL", "tilt": None, "fast_lower": False}
-        
+                             "drive": "NEUTRAL", "tilt": None, "slow_lower": False}
         # Create a QoS profile for the Joy subscription with BEST_EFFORT reliability
         joy_qos = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
@@ -30,7 +29,6 @@ class InputListener:
             '/joy',
             self.joy_callback,
             joy_qos)  # Using the custom QoS profile
-            
         self.twist_subscriber = self.node.create_subscription(
             Twist,
             '/twist',
@@ -94,34 +92,18 @@ class InputListener:
         self.joy_message_count += 1
         self.last_joy_timestamp = time.time()
         
-        # Add debug logging to see the raw message - safely check array lengths first
-        # Commenting out excessive logging
-        # axis0_val = msg.axes[0] if len(msg.axes) > 0 else "N/A"
-        # axis7_val = msg.axes[7] if len(msg.axes) > 7 else "N/A"
-        # 
-        # # Format the values as strings, with floats formatted to 3 decimal places if they are numbers
-        # axis0_str = f"{axis0_val:.3f}" if isinstance(axis0_val, float) else str(axis0_val)
-        # axis7_str = f"{axis7_val:.3f}" if isinstance(axis7_val, float) else str(axis7_val)
-        # 
-        # self.node.get_logger().info(f"Received joy message #{self.joy_message_count}: axes[0]={axis0_str}, axes[7]={axis7_str}, buttons.len={len(msg.buttons)}, axes.len={len(msg.axes)}")
-        
         with self._lock:
             # ----- Drive Command Mapping -----
-            # For drive throttle, using axis 7
-            # Update for joystick that sends values from 0 to 1 instead of -1 to 0
+            # For drive throttle, using axis 7 which provides values from 0 to 1
             if len(msg.axes) > 7:
                 # Use the value directly if it's in the 0 to 1 range
                 throttle_value = msg.axes[7] if msg.axes[7] > 0 else 0
                 self.drive_command["throttle"] = throttle_value
-                
-                # Debug logging occasionally (every 20th message)
-                if self.joy_message_count % 20 == 0:
-                    self.node.get_logger().info(f"Raw axis[7]={msg.axes[7]:.3f}, mapped throttle={throttle_value:.3f}")
             
             # Log throttle value periodically
             self.throttle_log_counter += 1
             if self.throttle_log_counter >= self.log_interval:
-                # self.node.get_logger().info(f"Input Listener - Current throttle value: {throttle_value:.3f}")
+                self.node.get_logger().info(f"Input Listener - Current throttle value: {throttle_value:.3f}")
                 self.throttle_log_counter = 0
             
             # For drive steering, assume the left analog horizontal axis (axes[0]).
@@ -139,7 +121,7 @@ class InputListener:
             # Here we assume:
             # - Button 3 (Y) triggers (forward)
             # - Button 1 (B) triggers (backward)
-            if len(msg.buttons) >= 16:  # Make sure we have enough buttons before accessing them
+            if len(msg.buttons) >= 8:
                 self.lift_command["lift"] = (msg.buttons[12] == 1)
                 self.lift_command["lower"] = (msg.buttons[13] == 1)
                 
@@ -161,15 +143,6 @@ class InputListener:
                     self.lift_command["sideshift"] = 'R'
                 else:
                     self.lift_command["sideshift"] = None
-            else:
-                # Log a warning if we don't have enough buttons
-                self.node.get_logger().warn(f"Joy message has insufficient buttons: {len(msg.buttons)}/16 required")
-                # Reset lift commands to safe values
-                self.lift_command["lift"] = False
-                self.lift_command["lower"] = False
-                self.lift_command["fast_lower"] = False
-                self.lift_command["drive"] = "NEUTRAL"
-                self.lift_command["sideshift"] = None
 
     def twist_callback(self, msg: Twist):
         # If you wish to use Twist messages for lift commands, implement your mapping here.
