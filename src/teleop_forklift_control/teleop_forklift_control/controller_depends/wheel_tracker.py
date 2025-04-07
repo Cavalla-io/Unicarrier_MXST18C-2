@@ -29,9 +29,6 @@ class WheelTracker:
         - 186 to 255 (0xBA-0xFF) maps to 180-360 degrees
         - Values between 71-185 are clamped to either 70 or 186
         """
-        # Store original value for logging
-        original_value = raw_byte
-        
         if raw_byte <= 70:
             # Map 0-70 to 0-180 degrees
             angle = (raw_byte * 180.0) / 70.0
@@ -47,23 +44,8 @@ class WheelTracker:
             else:
                 # Closer to 186, clamp to 186
                 angle = 180.0
-            logger.info(f"WARNING: Value {raw_byte} (0x{raw_byte:02X}) in dead zone, clamped to 180°")
         
-        # Always print for values in the upper range
-        if raw_byte >= 186:
-            logger.info(f"DEBUG: Raw value 0x{raw_byte:02X} ({raw_byte}) mapped to {angle:.2f}°")
-        
-        # Debug logging for unexpected jumps
-        if self.prev_raw_value is not None and self.prev_angle is not None:
-            angle_diff = abs(angle - self.prev_angle)
-            # Account for wrap-around
-            if angle_diff > 180:
-                angle_diff = 360 - angle_diff
-                
-            if angle_diff > 20 and abs(raw_byte - self.prev_raw_value) < 10:
-                logger.info(f"UNEXPECTED JUMP: Raw 0x{self.prev_raw_value:02X}->{raw_byte:02X}, Angle {self.prev_angle:.2f}°->{angle:.2f}°")
-        
-        # Store values for next comparison
+        # Store values for tracking
         self.prev_raw_value = raw_byte
         self.prev_angle = angle
         
