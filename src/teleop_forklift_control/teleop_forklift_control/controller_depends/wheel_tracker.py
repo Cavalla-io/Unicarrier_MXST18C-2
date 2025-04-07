@@ -28,6 +28,8 @@ class WheelTracker:
         - 0 to 70 (0x00-0x46) maps to 0-180 degrees
         - 186 to 255 (0xBA-0xFF) maps to 180-360 degrees
         - Values between 71-185 are clamped to either 70 or 186
+        
+        Returns the angle rounded to the nearest whole number.
         """
         if raw_byte <= 70:
             # Map 0-70 to 0-180 degrees
@@ -44,6 +46,9 @@ class WheelTracker:
             else:
                 # Closer to 186, clamp to 186
                 angle = 180.0
+        
+        # Round to nearest whole number
+        angle = round(angle)
         
         # Store values for tracking
         self.prev_raw_value = raw_byte
@@ -89,7 +94,7 @@ def main():
                 angle = wheel_tracker.translate_encoder_to_angle(raw_byte)
                 
                 if prev_raw != raw_byte:
-                    print(f"CAN data: {[hex(x)[2:].zfill(2) for x in message.data]}, Raw: 0x{raw_byte:02X} ({raw_byte}) -> Angle: {angle:.2f}°")
+                    print(f"CAN data: {[hex(x)[2:].zfill(2) for x in message.data]}, Raw: 0x{raw_byte:02X} ({raw_byte}) -> Angle: {angle}°")
                     prev_raw = raw_byte
         except KeyboardInterrupt:
             print("Exiting...")
