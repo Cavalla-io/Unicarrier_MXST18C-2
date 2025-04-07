@@ -19,29 +19,39 @@ class WheelTracker:
         self.prev_raw_value = None
         self.prev_angle = None
 
-    def translate_encoder_to_angle(self, signed_value):
+    def translate_encoder_to_angle(self, raw_byte):
         """
-        Translate a signed int8 encoder reading (-128 to 127) into an angle (in degrees)
+        Translate a raw byte value (0-255) into an angle (in degrees)
         within the 0-360 range.
         
         Mapping:
-        - 0 to 70 (hex 0x00-0x46) maps to 0-180 degrees
-        - -70 to -1 (hex 0xBA-0xFF) maps to 180-360 degrees
-        - Values outside these ranges are clamped
+        - 0 to 70 (0x00-0x46) maps to 0-180 degrees
+        - 186 to 255 (0xBA-0xFF) maps to 180-360 degrees
+        - Values between 71-185 are clamped to either 70 or 186
         """
-        if signed_value >= 0:
-            if signed_value > 70:
-                # Clamp positive values to max 70
-                signed_value = 70
+        # Store original value for logging
+        original_value = raw_byte
+        
+        if raw_byte <= 70:
             # Map 0-70 to 0-180 degrees
-            angle = (signed_value * 180.0) / 70.0
-        else:  # negative values
-            if signed_value < -70:
-                # Clamp negative values to min -70
-                signed_value = -70
-            # Map -70 to -1 to 180-360 degrees
-            # -70 → 180°, -1 → 359°
-            angle = 180.0 + ((70.0 + signed_value) * 180.0 / 70.0)
+            angle = (raw_byte * 180.0) / 70.0
+        elif raw_byte >= 186:  # 186 is equivalent to -70 in two's complement
+            # Map 186-255 to 180-360 degrees
+            # 186 → 180°, 255 → 359.5°
+            angle = 180.0 + ((raw_byte - 186) * 180.0 / 69.0)
+        else:
+            # Values in the gap (71-185)
+            if raw_byte <= 127:
+                # Closer to 70, clamp to 70
+                angle = 180.0
+            else:
+                # Closer to 186, clamp to 186
+                angle = 180.0
+            logger.info(f"WARNING: Value {raw_byte} (0x{raw_byte:02X}) in dead zone, clamped to 180°")
+        
+        # Always print for values in the upper range
+        if raw_byte >= 186:
+            logger.info(f"DEBUG: Raw value 0x{raw_byte:02X} ({raw_byte}) mapped to {angle:.2f}°")
         
         # Debug logging for unexpected jumps
         if self.prev_raw_value is not None and self.prev_angle is not None:
@@ -50,14 +60,11 @@ class WheelTracker:
             if angle_diff > 180:
                 angle_diff = 360 - angle_diff
                 
-            if angle_diff > 20 and (
-                (signed_value >= 0 and self.prev_raw_value >= 0 and abs(signed_value - self.prev_raw_value) < 10) or
-                (signed_value < 0 and self.prev_raw_value < 0 and abs(signed_value - self.prev_raw_value) < 10)
-            ):
-                logger.info(f"UNEXPECTED JUMP: Signed {self.prev_raw_value}->{signed_value}, Angle {self.prev_angle:.2f}°->{angle:.2f}°")
+            if angle_diff > 20 and abs(raw_byte - self.prev_raw_value) < 10:
+                logger.info(f"UNEXPECTED JUMP: Raw 0x{self.prev_raw_value:02X}->{raw_byte:02X}, Angle {self.prev_angle:.2f}°->{angle:.2f}°")
         
         # Store values for next comparison
-        self.prev_raw_value = signed_value
+        self.prev_raw_value = raw_byte
         self.prev_angle = angle
         
         return angle
@@ -65,14 +72,14 @@ class WheelTracker:
 # Create a standalone function that wheel_tracker_node.py is trying to import
 # This maintains a global instance of WheelTracker to persist state between calls
 _global_wheel_tracker = WheelTracker()
-def translate_encoder_to_angle(signed_value):
+def translate_encoder_to_angle(raw_byte):
     """
     Standalone function that delegates to the WheelTracker class method.
     This allows importing this function directly from the module.
     
-    Input should be a signed int8 value (-128 to 127), not a raw byte (0-255).
+    Input should be a raw byte value (0-255).
     """
-    return _global_wheel_tracker.translate_encoder_to_angle(signed_value)
+    return _global_wheel_tracker.translate_encoder_to_angle(raw_byte)
 
 def main():
     try:
@@ -84,7 +91,7 @@ def main():
     print(f"Listening for CAN frame 0x{TARGET_FRAME_ID:X} on channel {CAN_CHANNEL}...")
     
     wheel_tracker = WheelTracker()
-    prev_signed = None
+    prev_raw = None
 
     while True:
         try:
@@ -93,24 +100,15 @@ def main():
                 continue
 
             if message.arbitration_id == TARGET_FRAME_ID:
-                # Get the raw value as an unsigned byte
+                # Get the raw byte value directly - no conversion to signed
                 raw_byte = message.data[3]
                 
-                # Convert to signed int8 properly
-                # First method: using struct to unpack as signed char
-                signed_value = struct.unpack('b', bytes([raw_byte]))[0]
+                # Calculate angle
+                angle = wheel_tracker.translate_encoder_to_angle(raw_byte)
                 
-                # Alternative manual conversion (as backup)
-                # if raw_byte > 127:
-                #     signed_value = raw_byte - 256
-                # else:
-                #     signed_value = raw_byte
-                
-                angle = wheel_tracker.translate_encoder_to_angle(signed_value)
-                
-                if prev_signed != signed_value:
-                    print(f"CAN data: {[hex(x)[2:].zfill(2) for x in message.data]}, Raw: 0x{raw_byte:02X}, Signed: {signed_value} -> Angle: {angle:.2f}°")
-                    prev_signed = signed_value
+                if prev_raw != raw_byte:
+                    print(f"CAN data: {[hex(x)[2:].zfill(2) for x in message.data]}, Raw: 0x{raw_byte:02X} ({raw_byte}) -> Angle: {angle:.2f}°")
+                    prev_raw = raw_byte
         except KeyboardInterrupt:
             print("Exiting...")
             break
