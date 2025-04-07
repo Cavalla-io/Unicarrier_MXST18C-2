@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 import can
 import time
+import logging
+import struct
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # --- Configuration ---
 CAN_CHANNEL = 'can0'
@@ -9,54 +15,64 @@ TARGET_FRAME_ID = 0x199
 
 class WheelTracker:
     def __init__(self):
+        # Minimal tracking for debugging
         self.prev_raw_value = None
-        self.total_revolutions = 0
-        self.reference_value = 0xFF  # The "forward" position
+        self.prev_angle = None
 
-    def translate_encoder_to_angle(self, raw_value):
+    def translate_encoder_to_angle(self, signed_value):
         """
-        Translate an 8-bit encoder reading (0-255) into an angle (in degrees)
-        relative to the straight forward position (0xFF), allowing for full 360-degree tracking.
+        Translate a signed int8 encoder reading (-128 to 127) into an angle (in degrees)
+        within the 0-360 range.
         
-        This function keeps track of previous values to detect wrap-around and count
-        complete revolutions. This allows for tracking angles beyond ±180° from the reference point.
+        Mapping:
+        - 0 to 70 (hex 0x00-0x46) maps to 0-180 degrees
+        - -70 to -1 (hex 0xBA-0xFF) maps to 180-360 degrees
+        - Values outside these ranges are clamped
         """
-        if self.prev_raw_value is None:
-            self.prev_raw_value = raw_value
-            return 0.0
+        if signed_value >= 0:
+            if signed_value > 70:
+                # Clamp positive values to max 70
+                signed_value = 70
+            # Map 0-70 to 0-180 degrees
+            angle = (signed_value * 180.0) / 70.0
+        else:  # negative values
+            if signed_value < -70:
+                # Clamp negative values to min -70
+                signed_value = -70
+            # Map -70 to -1 to 180-360 degrees
+            # -70 → 180°, -1 → 359°
+            angle = 180.0 + ((70.0 + signed_value) * 180.0 / 70.0)
         
-        # Detect wrap-around
-        if self.prev_raw_value > 200 and raw_value < 50:
-            # Clockwise wrap around (255 -> 0)
-            self.total_revolutions += 1
-        elif self.prev_raw_value < 50 and raw_value > 200:
-            # Counter-clockwise wrap around (0 -> 255)
-            self.total_revolutions -= 1
-            
-        # Store current value for next comparison
-        self.prev_raw_value = raw_value
+        # Debug logging for unexpected jumps
+        if self.prev_raw_value is not None and self.prev_angle is not None:
+            angle_diff = abs(angle - self.prev_angle)
+            # Account for wrap-around
+            if angle_diff > 180:
+                angle_diff = 360 - angle_diff
+                
+            if angle_diff > 20 and (
+                (signed_value >= 0 and self.prev_raw_value >= 0 and abs(signed_value - self.prev_raw_value) < 10) or
+                (signed_value < 0 and self.prev_raw_value < 0 and abs(signed_value - self.prev_raw_value) < 10)
+            ):
+                logger.info(f"UNEXPECTED JUMP: Signed {self.prev_raw_value}->{signed_value}, Angle {self.prev_angle:.2f}°->{angle:.2f}°")
         
-        # Calculate continuous angle
-        # First get the base position within the current revolution
-        current_position = raw_value * (360.0 / 256)
-        # Then add the contribution from complete revolutions
-        total_angle = current_position + (self.total_revolutions * 360.0)
+        # Store values for next comparison
+        self.prev_raw_value = signed_value
+        self.prev_angle = angle
         
-        # Adjust relative to the reference position
-        reference_position = self.reference_value * (360.0 / 256)
-        relative_angle = total_angle - reference_position
-        
-        return relative_angle
+        return angle
 
 # Create a standalone function that wheel_tracker_node.py is trying to import
 # This maintains a global instance of WheelTracker to persist state between calls
 _global_wheel_tracker = WheelTracker()
-def translate_encoder_to_angle(raw_value):
+def translate_encoder_to_angle(signed_value):
     """
     Standalone function that delegates to the WheelTracker class method.
     This allows importing this function directly from the module.
+    
+    Input should be a signed int8 value (-128 to 127), not a raw byte (0-255).
     """
-    return _global_wheel_tracker.translate_encoder_to_angle(raw_value)
+    return _global_wheel_tracker.translate_encoder_to_angle(signed_value)
 
 def main():
     try:
@@ -65,9 +81,10 @@ def main():
         print("Error initializing CAN bus:", e)
         return
 
-    # print(f"Listening for CAN frame 0x{TARGET_FRAME_ID:X} on channel {CAN_CHANNEL}...")
+    print(f"Listening for CAN frame 0x{TARGET_FRAME_ID:X} on channel {CAN_CHANNEL}...")
     
     wheel_tracker = WheelTracker()
+    prev_signed = None
 
     while True:
         try:
@@ -76,10 +93,24 @@ def main():
                 continue
 
             if message.arbitration_id == TARGET_FRAME_ID:
-                # Assuming the encoder value is in the first byte of the data payload.
-                raw_value = message.data[3]
-                angle = wheel_tracker.translate_encoder_to_angle(raw_value)
-                # print(f"Raw: 0x{raw_value:02X} -> Angle: {angle:.2f} degrees")
+                # Get the raw value as an unsigned byte
+                raw_byte = message.data[3]
+                
+                # Convert to signed int8 properly
+                # First method: using struct to unpack as signed char
+                signed_value = struct.unpack('b', bytes([raw_byte]))[0]
+                
+                # Alternative manual conversion (as backup)
+                # if raw_byte > 127:
+                #     signed_value = raw_byte - 256
+                # else:
+                #     signed_value = raw_byte
+                
+                angle = wheel_tracker.translate_encoder_to_angle(signed_value)
+                
+                if prev_signed != signed_value:
+                    print(f"CAN data: {[hex(x)[2:].zfill(2) for x in message.data]}, Raw: 0x{raw_byte:02X}, Signed: {signed_value} -> Angle: {angle:.2f}°")
+                    prev_signed = signed_value
         except KeyboardInterrupt:
             print("Exiting...")
             break
