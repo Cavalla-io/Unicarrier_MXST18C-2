@@ -103,7 +103,7 @@ class InputListener:
             # Log throttle value periodically
             self.throttle_log_counter += 1
             if self.throttle_log_counter >= self.log_interval:
-                self.node.get_logger().info(f"Input Listener - Current throttle value: {throttle_value:.3f}")
+                # self.node.get_logger().info(f"Input Listener - Current throttle value: {throttle_value:.3f}")
                 self.throttle_log_counter = 0
             
             # For drive steering, assume the left analog horizontal axis (axes[0]).
