@@ -145,6 +145,21 @@ ament_export_dependencies(${COMMON_DEPS} ${SENSOR_DEPS} ${NN_DEPS} ${CAM_DEPS})
 
 install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
 
+# Install Python modules and scripts
+install(
+  DIRECTORY ${PROJECT_NAME}/
+  DESTINATION lib/python3/dist-packages/${PROJECT_NAME}
+  PATTERN "*.py"
+)
+
+# Install Python executables
+install(
+  PROGRAMS
+  multicamera_pipeline/rtsp_stream_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME rtsp_stream_node
+)
+
 # install(TARGETS ${PROJECT_NAME}  ${SENSOR_LIB_NAME}
 # ${NN_LIB_NAME}
 # ${COMMON_LIB_NAME}

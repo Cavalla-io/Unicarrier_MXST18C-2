@@ -29,6 +29,8 @@
   <depend>diagnostic_updater</depend>
   <depend>diagnostic_msgs</depend>
   <depend>ffmpeg_image_transport_msgs</depend>
+  <depend>python3-opencv</depend>
+  <depend>python3-gst-1.0</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

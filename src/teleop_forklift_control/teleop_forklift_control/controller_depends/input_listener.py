@@ -15,7 +15,7 @@ class InputListener:
         self.drive_command = {"throttle": 0.00, "steering": None}
         # Lift commands: lift, lower, sideshift, drive, and tilt.
         self.lift_command = {"lift": False, "lower": False, "sideshift": None,
-                             "drive": "NEUTRAL", "tilt": None, "slow_lower": False}
+                             "drive": "NEUTRAL", "tilt": None, "fast_lower": False}
         # Create a QoS profile for the Joy subscription with BEST_EFFORT reliability
         joy_qos = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
@@ -122,8 +122,8 @@ class InputListener:
             # - Button 3 (Y) triggers (forward)
             # - Button 1 (B) triggers (backward)
             if len(msg.buttons) >= 8:
-                self.lift_command["lift"] = (msg.buttons[12] == 1)
-                self.lift_command["lower"] = (msg.buttons[13] == 1)
+                self.lift_command["lift"] = (msg.buttons[2] == 1)
+                self.lift_command["lower"] = (msg.buttons[0] == 1)
                 
                 # Check button 4 for slow lowering mode
                 self.lift_command["fast_lower"] = (msg.buttons[4] == 1)
