@@ -47,9 +47,19 @@ def generate_launch_description():
         condition=UnlessCondition(LaunchConfiguration('sim_mode'))
     )
     
+    # Remote start node
+    remote_start_node = Node(
+        package='teleop_forklift_control',
+        executable='remote_start',
+        name='remote_start_node',
+        output='screen',
+        emulate_tty=True
+    )
+    
     return LaunchDescription([
         sim_mode_arg,
         main_controller_node,
         wheel_tracker_sim_node,
-        wheel_tracker_real_node
+        wheel_tracker_real_node,
+        remote_start_node
     ]) 
