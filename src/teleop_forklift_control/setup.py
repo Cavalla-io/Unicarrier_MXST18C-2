@@ -29,7 +29,9 @@ setup(
             # This creates a console executable called "main" which will invoke main() from teleop_forklift_control/scripts/main.py.
             'main = teleop_forklift_control.scripts.main:main',
             # New entry point for the wheel tracker node
-            'wheel_tracker = teleop_forklift_control.scripts.wheel_tracker_node:main'
+            'wheel_tracker = teleop_forklift_control.scripts.wheel_tracker_node:main',
+            # New entry point for the remote start node
+            'remote_start = teleop_forklift_control.scripts.remote_start_node:main'
         ],
     },
 )
