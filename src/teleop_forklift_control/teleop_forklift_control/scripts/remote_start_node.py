@@ -7,6 +7,7 @@ import threading
 import time
 import signal
 import sys
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
 class RemoteStartNode(Node):
     def __init__(self):
@@ -21,7 +22,7 @@ class RemoteStartNode(Node):
         try:
             self.serial_port = serial.Serial(
                 port='/dev/steering',
-                baudrate=115200,  # Adjust baudrate as needed for your steering board
+                baudrate=230400,  # Adjust baudrate as needed for your steering board
                 bytesize=serial.EIGHTBITS,
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
@@ -32,12 +33,19 @@ class RemoteStartNode(Node):
             self.get_logger().error(f"Error connecting to steering board: {e}")
             self.serial_port = None
         
-        # Create a subscriber for the remote start/stop commands
+        # Create a QoS profile with BEST_EFFORT reliability to match publishers
+        best_effort_qos = QoSProfile(
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=10
+        )
+        
+        # Create a subscriber for the remote start/stop commands with BEST_EFFORT QoS
         self.start_stop_subscriber = self.create_subscription(
             String,  # Using String message type for start/stop commands
             '/forklift/remote_start',
             self.remote_start_callback,
-            10  # QoS history depth
+            best_effort_qos  # Use BEST_EFFORT QoS to match typical joystick publishers
         )
         
         # Set up signal handler for graceful shutdown
@@ -50,8 +58,9 @@ class RemoteStartNode(Node):
     
     def setup_signal_handlers(self):
         """Set up signal handlers for graceful shutdown"""
-        signal.signal(signal.SIGINT, self.signal_handler)
-        signal.signal(signal.SIGTERM, self.signal_handler)
+        # ROS2 already handles SIGINT, so we don't need to register it explicitly
+        # We'll still properly handle cleanup in our main loop's except block
+        pass
     
     def signal_handler(self, sig, frame):
         """Handle termination signals gracefully"""
@@ -82,11 +91,11 @@ class RemoteStartNode(Node):
         try:
             if command == "start":
                 # Format the start command for your steering board
-                self.serial_port.write(b"START\n")
+                self.serial_port.write(b"c\n")
                 self.get_logger().info("Sent START command to steering board")
             elif command == "stop":
                 # Format the stop command for your steering board
-                self.serial_port.write(b"STOP\n")
+                self.serial_port.write(b"o\n")
                 self.get_logger().info("Sent STOP command to steering board")
         except Exception as e:
             self.get_logger().error(f"Error sending command to steering board: {e}")
@@ -121,8 +130,8 @@ def main(args=None):
         # Spin the node
         rclpy.spin(remote_start)
     except KeyboardInterrupt:
-        if remote_start:
-            remote_start.get_logger().info("Keyboard interrupt received, shutting down.")
+        # This will catch Ctrl+C properly
+        print("Keyboard interrupt received, shutting down...")
     except Exception as e:
         print(f"Error in remote start node: {e}")
     finally:
