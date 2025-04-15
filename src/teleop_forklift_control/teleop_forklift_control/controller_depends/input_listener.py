@@ -44,7 +44,7 @@ class InputListener:
         # Add tracking for joy messages
         self.joy_message_count = 0
         self.last_joy_timestamp = time.time()  # Initialize with current time
-        self.timeout_threshold = 0.3  # Timeout threshold in seconds
+        self.timeout_threshold = 0.5  # Timeout threshold in seconds, increased from 0.3 to 0.5 due to issue #6
         self.timeout_detected = False  # Flag to track if a timeout has been detected
         
         # Create a timer to check for joy message timeouts
