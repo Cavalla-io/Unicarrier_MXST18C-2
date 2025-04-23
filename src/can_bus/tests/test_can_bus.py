@@ -32,39 +32,39 @@ class CANBusTestNode(Node):
 def check_can_interfaces():
     """Check if CAN interfaces are properly initialized"""
     try:
-        # Run 'ip -d link show can0' to check can0 interface
-        result_can0 = subprocess.run(
-            ['ip', '-d', 'link', 'show', 'can0'],
+        # Run 'ip -d link show can2' to check can2 interface
+        result_can2 = subprocess.run(
+            ['ip', '-d', 'link', 'show', 'can2'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
         
-        # Run 'ip -d link show can1' to check can1 interface
-        result_can1 = subprocess.run(
-            ['ip', '-d', 'link', 'show', 'can1'],
+        # Run 'ip -d link show can3' to check can3 interface
+        result_can3 = subprocess.run(
+            ['ip', '-d', 'link', 'show', 'can3'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
         
         # Check if interfaces exist and are UP
-        can0_exists = result_can0.returncode == 0
-        can1_exists = result_can1.returncode == 0
-        can0_up = can0_exists and 'state UP' in result_can0.stdout
-        can1_up = can1_exists and 'state UP' in result_can1.stdout
+        can2_exists = result_can2.returncode == 0
+        can3_exists = result_can3.returncode == 0
+        can2_up = can2_exists and 'state UP' in result_can2.stdout
+        can3_up = can3_exists and 'state UP' in result_can3.stdout
         
         # Check bitrate settings if interfaces exist
-        can0_bitrate = '250000' in result_can0.stdout if can0_exists else False
-        can1_bitrate = '250000' in result_can1.stdout if can1_exists else False
+        can2_bitrate = '250000' in result_can2.stdout if can2_exists else False
+        can3_bitrate = '250000' in result_can3.stdout if can3_exists else False
         
         return {
-            'can0_exists': can0_exists,
-            'can1_exists': can1_exists,
-            'can0_up': can0_up,
-            'can1_up': can1_up,
-            'can0_bitrate_correct': can0_bitrate,
-            'can1_bitrate_correct': can1_bitrate
+            'can2_exists': can2_exists,
+            'can3_exists': can3_exists,
+            'can2_up': can2_up,
+            'can3_up': can3_up,
+            'can2_bitrate_correct': can2_bitrate,
+            'can3_bitrate_correct': can3_bitrate
         }
     except Exception as e:
         print(f"Error checking CAN interfaces: {e}")
@@ -106,28 +106,29 @@ def main(args=None):
         results = check_can_interfaces()
         
         if results:
-            # Print can0 status
-            if results['can0_exists']:
-                can0_status = 'UP' if results['can0_up'] else 'DOWN'
-                can0_bitrate = 'CORRECT (250000)' if results['can0_bitrate_correct'] else 'INCORRECT'
-                print(f"can0: {can0_status}, Bitrate: {can0_bitrate}")
+            # Print can2 status
+            if results['can2_exists']:
+                can2_status = 'UP' if results['can2_up'] else 'DOWN'
+                can2_bitrate = 'CORRECT (250000)' if results['can2_bitrate_correct'] else 'INCORRECT'
+                print(f"can2: {can2_status}, Bitrate: {can2_bitrate}")
             else:
-                print("can0: NOT FOUND")
+                print("can2: NOT FOUND")
             
-            # Print can1 status
-            if results['can1_exists']:
-                can1_status = 'UP' if results['can1_up'] else 'DOWN'
-                can1_bitrate = 'CORRECT (250000)' if results['can1_bitrate_correct'] else 'INCORRECT'
-                print(f"can1: {can1_status}, Bitrate: {can1_bitrate}")
+            # Print can3 status
+            if results['can3_exists']:
+                can3_status = 'UP' if results['can3_up'] else 'DOWN'
+                can3_bitrate = 'CORRECT (250000)' if results['can3_bitrate_correct'] else 'INCORRECT'
+                print(f"can3: {can3_status}, Bitrate: {can3_bitrate}")
             else:
-                print("can1: NOT FOUND")
+                print("can3: NOT FOUND")
                 
             # Overall status
-            if (results['can0_exists'] and results['can0_up'] and results['can0_bitrate_correct'] and
-                results['can1_exists'] and results['can1_up'] and results['can1_bitrate_correct']):
+            if (results['can2_exists'] and results['can2_up'] and results['can2_bitrate_correct'] and
+                results['can3_exists'] and results['can3_up'] and results['can3_bitrate_correct']):
                 print("✅ CAN interfaces are properly configured")
             else:
                 print("❌ CAN interfaces are not properly configured")
+                print("   Note: If interfaces don't exist, the node will attempt to create them when started")
         else:
             print("❌ Failed to check CAN interfaces")
     
