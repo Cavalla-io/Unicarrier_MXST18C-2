@@ -74,8 +74,4 @@ def shutdown_can_interface(interface):
 #Function to handle CAN shutdown
 def can_shutdown():
     shutdown_can_interface('can0')
-    shutdown_can_interface('can1')
-
-# Print the results
-# print(state_can0)
-# print(state_can1)
+    shutdown_can_interface('can1') 
