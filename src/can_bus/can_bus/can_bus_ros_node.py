@@ -16,16 +16,16 @@ class CanBusNode(Node):
     def __init__(self):
         super().__init__('can_bus_node')
         
-        # Configure CAN interfaces
-        self.CAN0_INTERFACE = 'can0'
-        self.CAN1_INTERFACE = 'can1'
+        # Configure CAN interfaces - using can2/can3 to avoid conflicts with existing interfaces
+        self.CAN2_INTERFACE = 'can2'
+        self.CAN3_INTERFACE = 'can3'
         
         # Set up CAN bus interfaces
-        self.bus_can0 = can.interface.Bus(channel=self.CAN0_INTERFACE, bustype='socketcan')
-        self.bus_can1 = can.interface.Bus(channel=self.CAN1_INTERFACE, bustype='socketcan')
+        self.bus_can2 = can.interface.Bus(channel=self.CAN2_INTERFACE, bustype='socketcan')
+        self.bus_can3 = can.interface.Bus(channel=self.CAN3_INTERFACE, bustype='socketcan')
         
-        # Initialize the lift controller
-        self.lift_controller = LiftController(self.bus_can1, 0x1A0)
+        # Initialize the lift controller - using can3 for lift control
+        self.lift_controller = LiftController(self.bus_can3, 0x1A0)
         
         # Global flags and state
         self.passthrough_active = True
@@ -57,6 +57,7 @@ class CanBusNode(Node):
         self.setup_signal_handlers()
         
         self.get_logger().info("CAN Bus Node started and ready to receive commands")
+        self.get_logger().info(f"Using CAN interfaces: {self.CAN2_INTERFACE} and {self.CAN3_INTERFACE}")
     
     def setup_signal_handlers(self):
         """Set up signal handlers for graceful shutdown"""
@@ -113,7 +114,7 @@ class CanBusNode(Node):
             
         elif command == "STATUS_CHECK":
             self.passthrough_active = False
-            self.send_can_message(self.bus_can0, 0x200, [0x00])  # Example status check message
+            self.send_can_message(self.bus_can2, 0x200, [0x00])  # Example status check message
             self.passthrough_active = True
             
         elif command == "PASSTHROUGH_ON":
@@ -142,25 +143,25 @@ class CanBusNode(Node):
     
     def passthrough_loop(self):
         """
-        Continuously pass messages between CAN0 and CAN1 when passthrough is active,
+        Continuously pass messages between CAN2 and CAN3 when passthrough is active,
         with filtering for blocked IDs.
         """
         while self.is_running:
             if self.passthrough_active:
                 try:
-                    # Non-blocking receive from CAN0
-                    can0_msg = self.bus_can0.recv(timeout=0)
-                    if can0_msg:
+                    # Non-blocking receive from CAN2
+                    can2_msg = self.bus_can2.recv(timeout=0)
+                    if can2_msg:
                         with self.blocked_ids_lock:
-                            if can0_msg.arbitration_id not in self.blocked_ids:
-                                self.bus_can1.send(can0_msg)  # Forward to CAN1
+                            if can2_msg.arbitration_id not in self.blocked_ids:
+                                self.bus_can3.send(can2_msg)  # Forward to CAN3
 
-                    # Non-blocking receive from CAN1
-                    can1_msg = self.bus_can1.recv(timeout=0)
-                    if can1_msg:
+                    # Non-blocking receive from CAN3
+                    can3_msg = self.bus_can3.recv(timeout=0)
+                    if can3_msg:
                         with self.blocked_ids_lock:
-                            if can1_msg.arbitration_id not in self.blocked_ids:
-                                self.bus_can0.send(can1_msg)  # Forward to CAN0
+                            if can3_msg.arbitration_id not in self.blocked_ids:
+                                self.bus_can2.send(can3_msg)  # Forward to CAN2
                 except can.CanError as e:
                     self.get_logger().error(f"CAN passthrough error: {e}")
             else:

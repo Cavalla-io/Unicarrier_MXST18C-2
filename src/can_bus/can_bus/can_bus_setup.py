@@ -29,6 +29,33 @@ def reset_can_interface(interface):
     os.system(f'sudo ip link set {interface} txqueuelen 10000')
     print(f"{interface} has been reset")
 
+# Function to create a CAN interface if it doesn't exist
+def create_can_interface(interface, device="can0"):
+    try:
+        # Check if the interface already exists
+        result = subprocess.run(
+            ['ip', 'link', 'show', interface],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        # If return code is 0, interface exists
+        if result.returncode == 0:
+            print(f"{interface} already exists")
+        else:
+            # Create virtual CAN interface
+            # Note: In a real system, you'd likely link this to physical hardware
+            # For can2 and can3, you might need to do more hardware-specific setup
+            print(f"Creating {interface} as virtual CAN interface")
+            os.system(f'sudo ip link add dev {interface} type vcan')
+            
+        # Set it up with the right parameters
+        reset_can_interface(interface)
+        
+    except Exception as e:
+        print(f"Error creating/setting up {interface}: {e}")
+
 # Function to set buffer sizes for CAN interfaces
 def set_can_buffers():
     try:
@@ -45,27 +72,33 @@ def can_startup():
     # Ensure buffer sizes are set before starting CAN interfaces
     set_can_buffers()
 
-    # Check the states of can0 and can1
-    state_can0 = check_can_state('can0')
-    state_can1 = check_can_state('can1')
+    # Check the states of can2 and can3
+    state_can2 = check_can_state('can2')
+    state_can3 = check_can_state('can3')
     
-    print(state_can0)
-    print(state_can1)
+    print(state_can2)
+    print(state_can3)
     
-    # If either interface is up, reset it
-    if "is UP" in state_can0:
-        print("can0 is still UP. Resetting...")
-        reset_can_interface('can0')
+    # Create or reset interfaces as needed
+    if "is UP" in state_can2:
+        print("can2 is UP. Resetting to ensure correct parameters...")
+        reset_can_interface('can2')
+    elif "is DOWN" in state_can2:
+        print("can2 is DOWN. Starting up...")
+        reset_can_interface('can2')
     else:
-        print("can0 is DOWN. Starting up now...")
-        reset_can_interface('can0')
+        print("can2 does not exist. Creating...")
+        create_can_interface('can2')
 
-    if "is UP" in state_can1:
-        print("can1 is still UP. Resetting...")
-        reset_can_interface('can1')
+    if "is UP" in state_can3:
+        print("can3 is UP. Resetting to ensure correct parameters...")
+        reset_can_interface('can3')
+    elif "is DOWN" in state_can3:
+        print("can3 is DOWN. Starting up...")
+        reset_can_interface('can3')
     else:
-        print("can1 is DOWN. Starting up now...")
-        reset_can_interface('can1')
+        print("can3 does not exist. Creating...")
+        create_can_interface('can3')
 
 #Shutdown logic
 def shutdown_can_interface(interface):
@@ -73,5 +106,5 @@ def shutdown_can_interface(interface):
 
 #Function to handle CAN shutdown
 def can_shutdown():
-    shutdown_can_interface('can0')
-    shutdown_can_interface('can1') 
+    shutdown_can_interface('can2')
+    shutdown_can_interface('can3') 
