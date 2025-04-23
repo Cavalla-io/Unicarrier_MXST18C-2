@@ -112,43 +112,41 @@ class RtspStreamNode(Node):
         # Ultra-low latency with UDP
         if self.pipeline_type == 1:
             return (
-                f"rtspsrc location={self.rtsp_url} latency=0 buffer-mode=none "
-                f"transport=udp drop-on-latency=true ! queue max-size-buffers=0 max-size-time=0 ! "
-                f"rtph264depay ! h264parse ! "
-                f"avdec_h264 max-threads=4 ! videoconvert ! video/x-raw,format=BGR ! "
+                f"rtspsrc location={self.rtsp_url} latency=0 "
+                f"! queue ! rtph265depay ! h265parse ! "
+                f"avdec_h265 ! videoconvert ! video/x-raw,format=BGR ! "
                 f"appsink max-buffers=1 drop=true sync=false"
             )
         # Alternative pipeline optimized for different cameras
         elif self.pipeline_type == 2:
             return (
                 f"rtspsrc location={self.rtsp_url} latency=0 "
-                f"! rtph264depay ! h264parse ! "
+                f"! rtph265depay ! h265parse ! "
                 f"decodebin ! videoconvert ! video/x-raw,format=BGR ! "
                 f"appsink max-buffers=1 drop=true sync=false"
             )
         # Try hardware acceleration if available
         elif self.pipeline_type == 3 and self.has_vaapi:
             return (
-                f"rtspsrc location={self.rtsp_url} latency=0 buffer-mode=none "
-                f"! rtph264depay ! h264parse ! "
+                f"rtspsrc location={self.rtsp_url} latency=0 "
+                f"! rtph265depay ! h265parse ! "
                 f"vaapidecode ! vaapipostproc format=bgr ! "
                 f"appsink max-buffers=1 drop=true sync=false"
             )
         # Direct TCP connection, bypassing some RTSP overhead
         elif self.pipeline_type == 4:
             return (
-                f"rtspsrc location={self.rtsp_url} latency=0 buffer-mode=none "
-                f"protocols=tcp transport=tcp use-buffering=false ! "
-                f"rtph264depay ! h264parse ! "
-                f"avdec_h264 max-threads=4 ! videoconvert ! video/x-raw,format=BGR ! "
+                f"rtspsrc location={self.rtsp_url} latency=0 protocols=tcp "
+                f"! rtph265depay ! h265parse ! "
+                f"avdec_h265 ! videoconvert ! video/x-raw,format=BGR ! "
                 f"appsink max-buffers=1 drop=true sync=false"
             )
         # Fallback to default pipeline
         else:
             return (
-                f"rtspsrc location={self.rtsp_url} latency=0 buffer-mode=auto "
-                f"transport=udp drop-on-latency=true ! rtph264depay ! h264parse ! "
-                f"avdec_h264 max-threads=4 ! videoconvert ! video/x-raw,format=BGR ! "
+                f"rtspsrc location={self.rtsp_url} "
+                f"! rtph265depay ! h265parse ! "
+                f"avdec_h265 ! videoconvert ! video/x-raw,format=BGR ! "
                 f"appsink max-buffers=1 drop=true sync=false"
             )
 
