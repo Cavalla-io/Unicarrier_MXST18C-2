@@ -16,16 +16,16 @@ class CanBusNode(Node):
     def __init__(self):
         super().__init__('can_bus_node')
         
-        # Configure CAN interfaces - using can2/can3 to avoid conflicts with existing interfaces
-        self.CAN2_INTERFACE = 'can2'
-        self.CAN3_INTERFACE = 'can3'
+        # Configure CAN interfaces - using physical interfaces on Jetson Orin AGX
+        self.CAN0_INTERFACE = 'can0'
+        self.CAN1_INTERFACE = 'can1'
         
         # Set up CAN interfaces using sudo
         self.get_logger().info("Setting up CAN interfaces...")
         can_startup()
         
         # Set up CAN bus interfaces with error handling
-        self.get_logger().info(f"Connecting to CAN interfaces {self.CAN2_INTERFACE} and {self.CAN3_INTERFACE}...")
+        self.get_logger().info(f"Connecting to CAN interfaces {self.CAN0_INTERFACE} and {self.CAN1_INTERFACE}...")
         self.connect_to_can_interfaces()
         
         # Create a QoS profile with BEST_EFFORT reliability
@@ -50,7 +50,7 @@ class CanBusNode(Node):
         self.blocked_ids_lock = threading.Lock()  # Lock to protect access to blocked_ids
         
         # Start the passthrough loop in a separate thread only if CAN interfaces are available
-        if hasattr(self, 'bus_can2') and hasattr(self, 'bus_can3'):
+        if hasattr(self, 'bus_can0') and hasattr(self, 'bus_can1'):
             self.passthrough_thread = threading.Thread(target=self.passthrough_loop)
             self.passthrough_thread.daemon = True
             self.passthrough_thread.start()
@@ -65,37 +65,37 @@ class CanBusNode(Node):
         """Connect to CAN interfaces with error handling"""
         try:
             # First check if interfaces exist and are up
-            can2_exists = check_interface_exists(self.CAN2_INTERFACE)
-            can3_exists = check_interface_exists(self.CAN3_INTERFACE)
+            can0_exists = check_interface_exists(self.CAN0_INTERFACE)
+            can1_exists = check_interface_exists(self.CAN1_INTERFACE)
             
-            if not can2_exists or not can3_exists:
-                self.get_logger().error(f"Missing CAN interfaces. Can2 exists: {can2_exists}, Can3 exists: {can3_exists}")
+            if not can0_exists or not can1_exists:
+                self.get_logger().error(f"Missing CAN interfaces. Can0 exists: {can0_exists}, Can1 exists: {can1_exists}")
                 self.get_logger().warn("Only limited functionality will be available.")
                 return
             
             # Check if interfaces are up
-            can2_ready, _ = check_can_state(self.CAN2_INTERFACE)
-            can3_ready, _ = check_can_state(self.CAN3_INTERFACE)
+            can0_ready, _ = check_can_state(self.CAN0_INTERFACE)
+            can1_ready, _ = check_can_state(self.CAN1_INTERFACE)
             
-            if not can2_ready or not can3_ready:
+            if not can0_ready or not can1_ready:
                 self.get_logger().warn("One or more CAN interfaces are not UP.")
                 
             # Try to connect to the interfaces
             try:
-                self.bus_can2 = can.interface.Bus(channel=self.CAN2_INTERFACE, bustype='socketcan')
-                self.get_logger().info(f"Connected to {self.CAN2_INTERFACE}")
+                self.bus_can0 = can.interface.Bus(channel=self.CAN0_INTERFACE, bustype='socketcan')
+                self.get_logger().info(f"Connected to {self.CAN0_INTERFACE}")
             except Exception as e:
-                self.get_logger().error(f"Failed to connect to {self.CAN2_INTERFACE}: {e}")
+                self.get_logger().error(f"Failed to connect to {self.CAN0_INTERFACE}: {e}")
                 
             try:
-                self.bus_can3 = can.interface.Bus(channel=self.CAN3_INTERFACE, bustype='socketcan')
-                self.get_logger().info(f"Connected to {self.CAN3_INTERFACE}")
+                self.bus_can1 = can.interface.Bus(channel=self.CAN1_INTERFACE, bustype='socketcan')
+                self.get_logger().info(f"Connected to {self.CAN1_INTERFACE}")
                 
-                # Initialize the lift controller only if can3 is available
-                self.lift_controller = LiftController(self.bus_can3, 0x1A0)
+                # Initialize the lift controller only if can1 is available
+                self.lift_controller = LiftController(self.bus_can1, 0x1A0)
                 self.get_logger().info("Lift controller initialized")
             except Exception as e:
-                self.get_logger().error(f"Failed to connect to {self.CAN3_INTERFACE}: {e}")
+                self.get_logger().error(f"Failed to connect to {self.CAN1_INTERFACE}: {e}")
                 
         except Exception as e:
             self.get_logger().error(f"Error setting up CAN interfaces: {e}")
@@ -173,12 +173,12 @@ class CanBusNode(Node):
                 self.passthrough_active = True
                 
             elif command == "STATUS_CHECK":
-                if hasattr(self, 'bus_can2'):
+                if hasattr(self, 'bus_can0'):
                     self.passthrough_active = False
-                    self.send_can_message(self.bus_can2, 0x200, [0x00])  # Example status check message
+                    self.send_can_message(self.bus_can0, 0x200, [0x00])  # Example status check message
                     self.passthrough_active = True
                 else:
-                    self.get_logger().error("Cannot perform STATUS_CHECK - CAN2 interface not available")
+                    self.get_logger().error("Cannot perform STATUS_CHECK - CAN0 interface not available")
                 
             elif command == "PASSTHROUGH_ON":
                 self.passthrough_active = True
@@ -215,43 +215,43 @@ class CanBusNode(Node):
     
     def passthrough_loop(self):
         """
-        Continuously pass messages between CAN2 and CAN3 when passthrough is active,
+        Continuously pass messages between CAN0 and CAN1 when passthrough is active,
         with filtering for blocked IDs.
         """
-        can2_error_count = 0
-        can3_error_count = 0
+        can0_error_count = 0
+        can1_error_count = 0
         max_errors = 5  # Maximum consecutive errors before warning
         
         while self.is_running:
-            if self.passthrough_active and hasattr(self, 'bus_can2') and hasattr(self, 'bus_can3'):
+            if self.passthrough_active and hasattr(self, 'bus_can0') and hasattr(self, 'bus_can1'):
                 try:
-                    # Non-blocking receive from CAN2
-                    can2_msg = self.bus_can2.recv(timeout=0.01)  # Small timeout to reduce CPU usage
-                    if can2_msg:
+                    # Non-blocking receive from CAN0
+                    can0_msg = self.bus_can0.recv(timeout=0.01)  # Small timeout to reduce CPU usage
+                    if can0_msg:
                         with self.blocked_ids_lock:
-                            if can2_msg.arbitration_id not in self.blocked_ids:
-                                self.bus_can3.send(can2_msg)  # Forward to CAN3
-                    can2_error_count = 0  # Reset error count on success
+                            if can0_msg.arbitration_id not in self.blocked_ids:
+                                self.bus_can1.send(can0_msg)  # Forward to CAN1
+                    can0_error_count = 0  # Reset error count on success
                 except can.CanError as e:
-                    can2_error_count += 1
-                    if can2_error_count >= max_errors:
-                        self.get_logger().warn(f"Multiple CAN2 errors: {e}")
-                        can2_error_count = 0  # Reset after logging
+                    can0_error_count += 1
+                    if can0_error_count >= max_errors:
+                        self.get_logger().warn(f"Multiple CAN0 errors: {e}")
+                        can0_error_count = 0  # Reset after logging
                     time.sleep(0.1)  # Sleep to avoid flooding with errors
                 
                 try:
-                    # Non-blocking receive from CAN3
-                    can3_msg = self.bus_can3.recv(timeout=0.01)  # Small timeout to reduce CPU usage
-                    if can3_msg:
+                    # Non-blocking receive from CAN1
+                    can1_msg = self.bus_can1.recv(timeout=0.01)  # Small timeout to reduce CPU usage
+                    if can1_msg:
                         with self.blocked_ids_lock:
-                            if can3_msg.arbitration_id not in self.blocked_ids:
-                                self.bus_can2.send(can3_msg)  # Forward to CAN2
-                    can3_error_count = 0  # Reset error count on success
+                            if can1_msg.arbitration_id not in self.blocked_ids:
+                                self.bus_can0.send(can1_msg)  # Forward to CAN0
+                    can1_error_count = 0  # Reset error count on success
                 except can.CanError as e:
-                    can3_error_count += 1
-                    if can3_error_count >= max_errors:
-                        self.get_logger().warn(f"Multiple CAN3 errors: {e}")
-                        can3_error_count = 0  # Reset after logging
+                    can1_error_count += 1
+                    if can1_error_count >= max_errors:
+                        self.get_logger().warn(f"Multiple CAN1 errors: {e}")
+                        can1_error_count = 0  # Reset after logging
                     time.sleep(0.1)  # Sleep to avoid flooding with errors
             else:
                 # Sleep a bit longer when passthrough is not active or interfaces not available
