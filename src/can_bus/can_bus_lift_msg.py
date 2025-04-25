@@ -54,4 +54,17 @@ class LiftController:
     def stop_lift(self):
         """Stop the lift operation."""
         self.lifting = False
-        print("Lift operation stopped.") 
+        print("Lift operation stopped.")
+
+
+# Example usage
+if __name__ == "__main__":
+    bus = can.interface.Bus(channel='can0', bustype='socketcan')
+    lift_controller = LiftController(bus, arbitration_id_1A0=0x1A0)
+
+    try:
+        lift_controller.start_lift("UP")
+        time.sleep(10)  # Run the lift for 10 seconds
+        lift_controller.stop_lift()
+    except KeyboardInterrupt:
+        lift_controller.stop_lift()
