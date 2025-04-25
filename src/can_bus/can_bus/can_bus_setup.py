@@ -22,9 +22,19 @@ def check_interface_exists(interface):
     except Exception:
         return False
 
+# Function to create a CAN interface if it doesn't exist
+def create_can_interface(interface):
+    """Create a CAN interface if it doesn't exist"""
+    # First check if we need to create the interface
+    if check_interface_exists(interface):
+        print(f"Interface {interface} already exists")
+    else:
+        print(f"Creating {interface} interface")
+        # Create the interface as a virtual CAN device
+        run_sudo_command(f"ip link add dev {interface} type vcan")
+
 # Function to check the state of a CAN interface
 def check_can_state(interface):
-    """Check the state of a CAN interface"""
     try:
         # Run 'ip link show' to check the interface state
         result = subprocess.run(
@@ -43,41 +53,28 @@ def check_can_state(interface):
     except Exception as e:
         return False, f"Error checking {interface} state: {e}"
 
-# Function to load CAN kernel modules
-def load_can_modules():
-    """Load necessary CAN kernel modules"""
-    print("Loading CAN kernel modules...")
-    # Insert the CAN BUS subsystem support module
-    run_sudo_command("modprobe can")
-    # Insert the raw CAN protocol module
-    run_sudo_command("modprobe can_raw")
-    # Add real CAN interface support (for Jetson, mttcan)
-    run_sudo_command("modprobe mttcan")
-
 # Function to reset a CAN interface using sudo directly
-def reset_can_interface(interface, bitrate=250000):
+def reset_can_interface(interface):
     """Set up a CAN interface properly"""
     print(f"Setting up {interface}...")
     
-    # First bring down the interface if it exists
-    if check_interface_exists(interface):
-        run_sudo_command(f"ip link set {interface} down")
+    # Make sure the interface exists before trying to configure it
+    create_can_interface(interface)
     
-    # Set it up as a CAN interface with specified bitrate
-    can_cmd = f"ip link set {interface} up type can bitrate {bitrate} berr-reporting on"
+    # Now set it up
+    run_sudo_command(f"ip link set {interface} down")
+    
+    # Try to set it up as CAN, but if that fails, just bring it up
+    can_cmd = f"ip link set {interface} up type can bitrate 250000"
     if run_sudo_command(can_cmd) != 0:
-        print(f"Warning: Could not set {interface} as CAN type with bitrate {bitrate}")
-        return False
+        print(f"Warning: Could not set {interface} as CAN type, bringing up without type specification")
+        run_sudo_command(f"ip link set {interface} up")
     
     # Set the queue length
     run_sudo_command(f"ip link set {interface} txqueuelen 10000")
     
-    # Check if the interface is up
-    is_up, status = check_can_state(interface)
-    print(status)
-    
     print(f"{interface} setup completed")
-    return is_up
+    return True
 
 # Function to set buffer sizes for CAN interfaces using sudo directly
 def set_can_buffers():
@@ -92,22 +89,19 @@ def set_can_buffers():
 
 # Function to handle CAN startup logic with direct sudo commands
 def can_startup():
-    # Load required kernel modules
-    load_can_modules()
-    
     # Set buffer sizes for optimal performance
     set_can_buffers()
 
-    # Check the states of can0 and can1
-    can0_ready, state_can0 = check_can_state('can0')
-    can1_ready, state_can1 = check_can_state('can1')
+    # Check the states of can2 and can3
+    can2_ready, state_can2 = check_can_state('can2')
+    can3_ready, state_can3 = check_can_state('can3')
     
-    print(state_can0)
-    print(state_can1)
+    print(state_can2)
+    print(state_can3)
     
     # Set up the interfaces
-    reset_can_interface('can0')
-    reset_can_interface('can1')
+    reset_can_interface('can2')
+    reset_can_interface('can3')
     
     # Return true to indicate success - the node will try to use the interfaces
     return True
@@ -116,7 +110,7 @@ def can_startup():
 def can_shutdown():
     print("Shutting down CAN interfaces...")
     # Only attempt to shut down interfaces if they exist
-    if check_interface_exists('can0'):
-        run_sudo_command(f"ip link set can0 down")
-    if check_interface_exists('can1'):
-        run_sudo_command(f"ip link set can1 down") 
+    if check_interface_exists('can2'):
+        run_sudo_command(f"ip link set can2 down")
+    if check_interface_exists('can3'):
+        run_sudo_command(f"ip link set can3 down") 
