@@ -4,9 +4,8 @@ import threading
 import time
 import argparse
 import can_bus_setup
-from can_bus_lift_msg import LiftController
 
-class UnifiedCanController:
+class CanBusMiddleman:
     def __init__(self):
         # Configuration
         self.CAN0_INTERFACE = 'can0'
@@ -22,9 +21,6 @@ class UnifiedCanController:
         self.blocked_ids = set()  # Set of blocked IDs
         self.blocked_ids_lock = threading.Lock()  # Lock to protect access to blocked_ids
         
-        # Component instances
-        self.lift_controller = None
-        
         # Threads
         self.passthrough_thread = None
 
@@ -38,9 +34,6 @@ class UnifiedCanController:
             # Now initialize the buses
             self.bus_can0 = can.interface.Bus(channel=self.CAN0_INTERFACE, bustype='socketcan')
             self.bus_can1 = can.interface.Bus(channel=self.CAN1_INTERFACE, bustype='socketcan')
-            
-            # Initialize the lift controller with bus_can1
-            self.lift_controller = LiftController(self.bus_can1, arbitration_id_1A0=0x1A0)
             
             print("CAN interfaces successfully initialized")
             return True
@@ -74,20 +67,18 @@ class UnifiedCanController:
     def get_system_status(self):
         """Return the current system status"""
         with self.blocked_ids_lock:
-            blocked_list = ", ".join([f"0x{id:X}" for id in self.blocked_ids])
+            if not self.blocked_ids:
+                blocked_list = "None"
+            else:
+                blocked_list = ", ".join([f"0x{id:X}" for id in self.blocked_ids])
         
         status = (
             f"CAN Passthrough Active: {self.passthrough_active}\n"
-            f"Lift Controller Active: {self.lift_controller.lifting}\n"
             f"Blocked IDs: {blocked_list}\n"
             f"CAN0 Status: {can_bus_setup.check_can_state('can0')}\n"
             f"CAN1 Status: {can_bus_setup.check_can_state('can1')}"
         )
         return status
-
-    def stop_other_operations(self):
-        """Stop any ongoing operations before starting a new one."""
-        self.lift_controller.stop_lift()
 
     def passthrough_loop(self):
         """
@@ -118,15 +109,14 @@ class UnifiedCanController:
 
     def cli_interface(self):
         """Simple CLI interface for direct interaction"""
-        print("\nCAN Bus Controller CLI")
+        print("\nCAN Bus Middleman CLI")
         print("Available commands:")
         print("  block <id>     - Block a CAN ID (e.g., block 0x1A0)")
         print("  unblock <id>   - Unblock a CAN ID (e.g., unblock 0x1A0)")
         print("  list           - List currently blocked IDs")
         print("  status         - Show system status")
-        print("  lift up        - Start lift operation upward")
-        print("  lift down      - Start lift operation downward")
-        print("  stop           - Stop lift operation")
+        print("  pause          - Pause the passthrough")
+        print("  resume         - Resume the passthrough")
         print("  quit           - Exit the program")
         
         while self.running:
@@ -148,26 +138,12 @@ class UnifiedCanController:
                                 print(f"Blocked: 0x{id:X}")
                 elif command == "status":
                     print(self.get_system_status())
-                elif command == "lift up":
+                elif command == "pause":
                     self.passthrough_active = False
-                    self.stop_other_operations()
-                    with self.blocked_ids_lock:
-                        self.blocked_ids.add(0x1A0)
-                    self.lift_controller.start_lift("UP")
-                    print("Lift UP operation started")
-                elif command == "lift down":
-                    self.passthrough_active = False
-                    self.stop_other_operations()
-                    with self.blocked_ids_lock:
-                        self.blocked_ids.add(0x1A0)
-                    self.lift_controller.start_lift("DOWN")
-                    print("Lift DOWN operation started")
-                elif command == "stop":
-                    self.lift_controller.stop_lift()
+                    print("CAN passthrough paused")
+                elif command == "resume":
                     self.passthrough_active = True
-                    with self.blocked_ids_lock:
-                        self.blocked_ids.discard(0x1A0)
-                    print("Lift operation stopped")
+                    print("CAN passthrough resumed")
                 elif command == "quit" or command == "exit":
                     print("Shutting down...")
                     self.shutdown()
@@ -192,7 +168,7 @@ class UnifiedCanController:
         self.passthrough_thread.daemon = True
         self.passthrough_thread.start()
         
-        print("CAN controller started successfully")
+        print("CAN bus middleman started successfully")
         
         # Start the CLI interface in the main thread
         try:
@@ -208,10 +184,6 @@ class UnifiedCanController:
         print("Initiating shutdown sequence...")
         self.running = False
         
-        # Stop any active lift operations
-        if self.lift_controller:
-            self.lift_controller.stop_lift()
-        
         # Shutdown CAN interfaces
         try:
             can_bus_setup.can_shutdown()
@@ -223,11 +195,11 @@ class UnifiedCanController:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Unified CAN Bus Controller')
+    parser = argparse.ArgumentParser(description='CAN Bus Middleman')
     args = parser.parse_args()
     
-    controller = UnifiedCanController()
-    controller.start()
+    middleman = CanBusMiddleman()
+    middleman.start()
 
 
 if __name__ == "__main__":
