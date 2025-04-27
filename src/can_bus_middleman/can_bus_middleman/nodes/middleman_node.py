@@ -136,26 +136,52 @@ class CanBusMiddleman(Node):
         Continuously pass messages between CAN0 and CAN1 when passthrough is active,
         with filtering for blocked IDs.
         """
+        # Set higher thread priority for this critical thread
+        try:
+            os.sched_setscheduler(0, os.SCHED_FIFO, os.sched_param(50))
+            self.get_logger().info("Set high priority for passthrough thread")
+        except (ImportError, PermissionError, AttributeError):
+            self.get_logger().warning("Could not set thread priority - CAN performance may be affected")
+        
+        # Handle errors less verbosely    
+        error_logged = False
+        
         while self.running:
             if self.passthrough_active:
                 try:
-                    # Non-blocking receive from CAN0
-                    can0_msg = self.bus_can0.recv(timeout=0)
-                    if can0_msg:
+                    # Process CAN0 messages in batches if available to reduce overhead
+                    for _ in range(10):  # Process up to 10 messages at once
+                        can0_msg = self.bus_can0.recv(timeout=0)
+                        if not can0_msg:
+                            break  # No more messages available
+                        
                         with self.blocked_ids_lock:
                             if can0_msg.arbitration_id not in self.blocked_ids:
                                 self.bus_can1.send(can0_msg)  # Forward to CAN1
-
-                    # Non-blocking receive from CAN1
-                    can1_msg = self.bus_can1.recv(timeout=0)
-                    if can1_msg:
+                
+                    # Process CAN1 messages in batches if available
+                    for _ in range(10):  # Process up to 10 messages at once
+                        can1_msg = self.bus_can1.recv(timeout=0)
+                        if not can1_msg:
+                            break  # No more messages available
+                        
                         with self.blocked_ids_lock:
                             if can1_msg.arbitration_id not in self.blocked_ids:
                                 self.bus_can0.send(can1_msg)  # Forward to CAN0
+                
+                    # Reset error flag if no errors occurred
+                    if error_logged:
+                        error_logged = False
+                        self.get_logger().info("CAN transmission resumed normally")
+                    
                 except can.CanError as e:
-                    self.get_logger().error(f"CAN passthrough error: {e}")
+                    # Only log the first occurrence of an error
+                    if not error_logged:
+                        self.get_logger().error(f"CAN passthrough error: {e}")
+                        error_logged = True
+            
             else:
-                # Sleep briefly to reduce CPU usage when passthrough is inactive
+                # Use non-blocking sleep when passthrough is inactive
                 threading.Event().wait(0.01)
 
     def cli_interface(self):
@@ -211,8 +237,10 @@ class CanBusMiddleman(Node):
     def ros_spin(self):
         """Thread function to spin the ROS node"""
         while self.running:
-            rclpy.spin_once(self, timeout_sec=0.1)
-            time.sleep(0.01)  # Small sleep to prevent CPU overuse
+            # Process only one callback at a time with minimal timeout
+            rclpy.spin_once(self, timeout_sec=0.001)
+            # Use a longer sleep between ROS processing cycles to reduce contention
+            time.sleep(0.05)  # 50ms - prioritizes CAN processing over ROS callbacks
 
     def start(self):
         """Start all components of the system"""
@@ -220,12 +248,22 @@ class CanBusMiddleman(Node):
             self.get_logger().error("Failed to start due to CAN interface setup issues")
             return False
 
-        # Start the passthrough loop in a separate thread
+        # Reduce ROS logger frequency to avoid interfering with CAN operations
+        rclpy.logging.set_logger_level('can_bus_middleman', rclpy.logging.LoggingSeverity.WARN)
+        
+        # Configure CAN interface for performance (if python-can supports this)
+        for bus in [self.bus_can0, self.bus_can1]:
+            if hasattr(bus, 'set_filters') and hasattr(bus, '_apply_filters'):
+                # Remove unnecessary filters to improve performance
+                bus.set_filters([])
+                self.get_logger().info(f"Optimized filters for {bus.channel}")
+        
+        # Start the passthrough loop in a separate thread with higher priority
         self.passthrough_thread = threading.Thread(target=self.passthrough_loop)
         self.passthrough_thread.daemon = True
         self.passthrough_thread.start()
         
-        # Start the ROS spin thread
+        # Start the ROS spin thread with lower priority
         self.ros_spin_thread = threading.Thread(target=self.ros_spin)
         self.ros_spin_thread.daemon = True
         self.ros_spin_thread.start()
