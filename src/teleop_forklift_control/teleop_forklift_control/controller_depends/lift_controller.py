@@ -6,7 +6,7 @@ class LiftController:
     def __init__(self, input_listener):
         self.listener = input_listener
         try:
-            self.bus = can.interface.Bus(channel='can0', interface='socketcan')
+            self.bus = can.interface.Bus(channel='can2', interface='socketcan')
         except Exception as e:
             print(f"LiftController: Error initializing CAN bus: {e}")
             raise
