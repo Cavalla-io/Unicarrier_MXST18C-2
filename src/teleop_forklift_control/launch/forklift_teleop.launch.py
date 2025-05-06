@@ -61,5 +61,5 @@ def generate_launch_description():
         main_controller_node,
         wheel_tracker_sim_node,
         wheel_tracker_real_node,
-        remote_start_node
+        # remote_start_node
     ]) 
