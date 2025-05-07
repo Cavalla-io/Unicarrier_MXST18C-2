@@ -4,8 +4,8 @@ import time
 
 class DriveController:
     def __init__(self, listener,
-                 steering_port='/dev/steering', throttle_port='/dev/throttle',
-                 baudrate=230400):
+                 steering_port='/dev/ttyUSB0', throttle_port='/dev/ttyUSB1',
+                 steering_baudrate=115200, throttle_baudrate=230400):
         # Save the shared input listener.
         self.listener = listener
 
@@ -14,8 +14,8 @@ class DriveController:
 
         # Open Serial Connections for steering and throttle controllers.
         try:
-            self.steering_ser = serial.Serial(steering_port, baudrate, timeout=1)
-            self.throttle_ser = serial.Serial(throttle_port, baudrate, timeout=1)
+            self.steering_ser = serial.Serial(steering_port, steering_baudrate, timeout=1)
+            self.throttle_ser = serial.Serial(throttle_port, throttle_baudrate, timeout=1)
         except Exception as e:
             print(f"Error opening serial ports: {e}")
             raise
