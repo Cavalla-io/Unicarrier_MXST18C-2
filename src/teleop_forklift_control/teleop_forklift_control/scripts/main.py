@@ -34,7 +34,7 @@ class CombinedControllerNode(Node):
     def check_available_serial_ports(self):
         """Check and log all available serial devices"""
         # List all ttyUSB and ttyACM devices
-        usb_devices = glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*')
+        usb_devices = glob.glob('/dev/steer*') + glob.glob('/dev/thrott*')
         
         if usb_devices:
             self.get_logger().info(f"Available serial devices: {', '.join(usb_devices)}")

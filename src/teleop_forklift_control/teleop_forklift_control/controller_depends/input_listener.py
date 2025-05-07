@@ -95,9 +95,9 @@ class InputListener:
         with self._lock:
             # ----- Drive Command Mapping -----
             # For drive throttle, using axis 7 which provides values from 0 to 1
-            if len(msg.axes) > 7:
+            if len(msg.axes) > 5:
                 # Use the value directly if it's in the 0 to 1 range
-                throttle_value = msg.axes[7] if msg.axes[7] > 0 else 0
+                throttle_value = msg.axes[5] if msg.axes[5] > 0 else 0
                 self.drive_command["throttle"] = throttle_value
             
             # Log throttle value periodically
@@ -122,16 +122,16 @@ class InputListener:
             # - Button 3 (Y) triggers (forward)
             # - Button 1 (B) triggers (backward)
             if len(msg.buttons) >= 8:
-                self.lift_command["lift"] = (msg.buttons[2] == 1)
-                self.lift_command["lower"] = (msg.buttons[0] == 1)
+                self.lift_command["lift"] = (msg.buttons[12] == 1)
+                self.lift_command["lower"] = (msg.buttons[13] == 1)
                 
                 # Check button 4 for slow lowering mode
                 self.lift_command["fast_lower"] = (msg.buttons[4] == 1)
                 
                 # Drive command for lift using buttons 1 and 3
-                if msg.buttons[1] == 1:
+                if msg.buttons[2] == 1:
                     self.lift_command["drive"] = "FORWARD"
-                elif msg.buttons[3] == 1:
+                elif msg.buttons[0] == 1:
                     self.lift_command["drive"] = "BACKWARD"
                 else:
                     self.lift_command["drive"] = "NEUTRAL"
