@@ -1,0 +1,3 @@
+[submodule "src/ros2-yolov8-template"]
+	path = src/ros2-yolov8-template
+	url = https://github.com/Victor-Boyd/ros2-yolov8-template.git
