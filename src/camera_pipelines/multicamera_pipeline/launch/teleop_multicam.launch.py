@@ -6,6 +6,7 @@ from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
     DeclareLaunchArgument,
+    LogInfo
 )
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -46,6 +47,13 @@ def launch_setup(context, *args, **kwargs):
                 "camera_model": "OAK-D-PRO-POE-NO-IMU",  # Specify custom camera model without IMU/stereo
                 "imu_from_descr": "false",  # Disable IMU frames from URDF
                 "publish_tf_from_calibration": "false",  # Disable publishing TF from calibration
+                "log_level": "fatal",  # Only show fatal errors
+                "container_output": "log",  # Redirect container output to log files
+                "rsp_output": "log",  # Redirect robot state publisher output to log files
+                "camera_output": "log",  # Redirect camera node output to log files
+                "debug": "false",  # Disable all debug output
+                "launch_prefix": "",  # No additional prefix
+                "base_frame": "",  # Empty base frame to minimize TF messages
             }.items(),
         )
         nodes.append(node)

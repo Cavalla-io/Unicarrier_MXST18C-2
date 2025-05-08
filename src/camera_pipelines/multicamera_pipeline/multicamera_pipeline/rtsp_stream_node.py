@@ -17,6 +17,19 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPo
 
 class RtspStreamNode(Node):
     def __init__(self):
+        # Redirect stdout and stderr before anything else to catch all warnings
+        self._original_stdout = sys.stdout
+        self._original_stderr = sys.stderr
+        self._stdout_devnull = None
+        self._stderr_devnull = None
+        
+        # Set extremely aggressive environment variables for OpenCV and GStreamer
+        os.environ["GST_DEBUG"] = "0"          # Disable GStreamer debug output completely
+        os.environ["GST_SILENT"] = "1"         # Silence GStreamer messages
+        os.environ["GST_DEBUG_NO_COLOR"] = "1" # Disable colored output
+        os.environ["OPENCV_LOG_LEVEL"] = "0"   # Suppress OpenCV warnings
+        
+        # Initialize the ROS node
         super().__init__('rtsp_stream_node')
         
         # Declare and get only necessary parameters
@@ -36,16 +49,14 @@ class RtspStreamNode(Node):
         self.pipeline_type = self.get_parameter('pipeline_type').get_parameter_value().integer_value
         self.silent_mode = self.get_parameter('silent_mode').get_parameter_value().bool_value
         
-        # Set proper logging level based on silent mode
+        # Redirect stdout and stderr if silent mode is enabled
         if self.silent_mode:
-            # Almost completely silent - only fatal errors
+            # Set logging level to FATAL (only show critical errors that prevent operation)
             self.get_logger().set_level(rclpy.logging.LoggingSeverity.FATAL)
-            # Suppress OpenCV/GStreamer warnings by redirecting stderr
-            os.environ["OPENCV_LOG_LEVEL"] = "FATAL"
-            # Completely disable GStreamer debug output
-            os.environ["GST_DEBUG"] = "0"
+            # Completely redirect stdout and stderr
+            self._redirect_all_output()
         else:
-            # Show errors only (still quiet but reports problems)
+            # Still use ERROR level to reduce verbosity but show problems
             self.get_logger().set_level(rclpy.logging.LoggingSeverity.ERROR)
         
         # Create QoS profile for reliable communication with volatile durability
@@ -66,7 +77,7 @@ class RtspStreamNode(Node):
         self.is_running = False
         self.capture_thread = None
         
-        # Check for hardware acceleration
+        # Check for hardware acceleration - do silently
         self.has_vaapi = self._check_for_vaapi()
         
         # Create a timer for diagnostics (but don't log frequently)
@@ -83,17 +94,29 @@ class RtspStreamNode(Node):
         # Flush any buffered frames on the network interface for this camera
         self._flush_network_buffer()
         
-        # Only report that we're starting
+        # Only report that we're starting if not in silent mode
         if not self.silent_mode:
             self.get_logger().info(f"Starting RTSP stream from {self.rtsp_url} to {self.topic_name}")
         
         # Start capturing frames
         self.start_capture()
 
+    def _redirect_all_output(self):
+        """Completely redirect both stdout and stderr to /dev/null"""
+        try:
+            self._stdout_devnull = open(os.devnull, 'w')
+            self._stderr_devnull = open(os.devnull, 'w')
+            sys.stdout = self._stdout_devnull
+            sys.stderr = self._stderr_devnull
+        except Exception:
+            # If this fails, restore original handles
+            sys.stdout = self._original_stdout
+            sys.stderr = self._original_stderr
+
     def _check_for_vaapi(self):
         """Check if VAAPI hardware acceleration is available"""
         try:
-            # Try to check for hardware acceleration capabilities
+            # Silently check for hardware acceleration capabilities 
             result = subprocess.run(
                 ['vainfo'], 
                 stdout=subprocess.PIPE, 
@@ -112,8 +135,8 @@ class RtspStreamNode(Node):
             ip_match = re.search(r'@?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', self.rtsp_url)
             if ip_match:
                 ip = ip_match.group(1)
-                # Attempt to flush network buffers - do silently now
-                os.system(f"ping -c 1 {ip} > /dev/null")  # Wake up the connection
+                # Attempt to flush network buffers silently
+                os.system(f"ping -c 1 {ip} > /dev/null 2>&1")  # Wake up the connection
                 os.system(f"sudo ip neigh flush {ip} > /dev/null 2>&1")  # Flush ARP cache
         except Exception as e:
             if not self.silent_mode:
@@ -128,9 +151,6 @@ class RtspStreamNode(Node):
 
     def get_pipeline_string(self, pipeline_type: int) -> str:
         """Get the GStreamer pipeline string based on the pipeline type."""
-        # Reduce GStreamer debug level to prevent console spam
-        os.environ["GST_DEBUG"] = "0"
-        
         # Create a simpler pipeline specifically for this camera
         return (
             f"rtspsrc location={self.rtsp_url} protocols=tcp latency=0 ! "
@@ -147,13 +167,10 @@ class RtspStreamNode(Node):
         
         while rclpy.ok():
             try:
-                # Set GStreamer debug level to 0 to prevent console spam
-                os.environ["GST_DEBUG"] = "0"
-                
                 # Create pipeline
                 pipeline_str = self.get_pipeline_string(self.pipeline_type)
                 
-                # Open stream with timeout
+                # Open stream with timeout - suppress warnings with environment variables
                 cap = cv2.VideoCapture(pipeline_str, cv2.CAP_GSTREAMER)
                 if not cap.isOpened():
                     raise RuntimeError(f"Failed to open RTSP stream at {self.rtsp_url}")
@@ -238,6 +255,15 @@ class RtspStreamNode(Node):
         if self.cap is not None:
             self.cap.release()
             self.cap = None
+            
+        # Restore stdout and stderr if we redirected them
+        if self._stdout_devnull is not None:
+            sys.stdout = self._original_stdout
+            self._stdout_devnull.close()
+            
+        if self._stderr_devnull is not None:
+            sys.stderr = self._original_stderr
+            self._stderr_devnull.close()
             
         super().destroy_node()
 

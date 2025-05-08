@@ -5,6 +5,7 @@ from launch import LaunchDescription
 from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
+    SetEnvironmentVariable,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -23,6 +24,31 @@ def generate_launch_description():
     run_duration = LaunchConfiguration('run_duration')
     silent_mode = LaunchConfiguration('silent_mode')
     rtsp_silent_mode = LaunchConfiguration('rtsp_silent_mode')
+    monitor_system_resources = LaunchConfiguration('monitor_system_resources')
+    
+    # Set ROS log level to FATAL to suppress all logging except critical errors
+    ros_log_env_var = SetEnvironmentVariable(
+        name='RCUTILS_LOGGING_LEVEL',
+        value='FATAL'
+    )
+    
+    # Set OpenCV log level to silence OpenCV warnings
+    opencv_log_env_var = SetEnvironmentVariable(
+        name='OPENCV_LOG_LEVEL',
+        value='0'
+    )
+    
+    # Set GStreamer log level to silence GStreamer messages
+    gst_log_env_var = SetEnvironmentVariable(
+        name='GST_DEBUG',
+        value='0'
+    )
+    
+    # Disable GStreamer messages
+    gst_silent_env_var = SetEnvironmentVariable(
+        name='GST_SILENT',
+        value='1'
+    )
     
     # Declare the launch options
     declare_display_debug = DeclareLaunchArgument(
@@ -61,6 +87,12 @@ def generate_launch_description():
         description='Run RTSP cameras in silent mode (no terminal output)'
     )
     
+    declare_monitor_resources = DeclareLaunchArgument(
+        name='monitor_system_resources',
+        default_value='true',
+        description='Monitor system CPU and memory usage during the test'
+    )
+    
     # Include the main multicamera pipeline with silent mode
     camera_pipeline = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -82,18 +114,27 @@ def generate_launch_description():
             'log_to_file': log_to_file,
             'monitor_period_sec': monitor_period,
             'run_duration_sec': run_duration,
-            'silent_mode': silent_mode
+            'silent_mode': silent_mode,
+            'monitor_system_resources': monitor_system_resources
         }]
     )
     
     # Combine everything into a launch description
     return LaunchDescription([
+        # Set environment variables first
+        ros_log_env_var,
+        opencv_log_env_var,
+        gst_log_env_var,
+        gst_silent_env_var,
+        # Then declare arguments
         declare_display_debug,
         declare_log_to_file,
         declare_monitor_period,
         declare_run_duration,
         declare_silent_mode,
         declare_rtsp_silent_mode,
+        declare_monitor_resources,
+        # Finally launch nodes
         camera_pipeline,
         performance_monitor
     ]) 

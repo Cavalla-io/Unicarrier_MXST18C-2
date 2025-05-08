@@ -12,6 +12,13 @@ from datetime import datetime
 import threading
 import sys
 
+# Import psutil for system monitoring
+try:
+    import psutil
+    HAVE_PSUTIL = True
+except ImportError:
+    HAVE_PSUTIL = False
+
 
 class CameraPerformanceMonitor(Node):
     """Monitor camera streams for performance metrics like latency, drops, and freezes."""
@@ -32,6 +39,7 @@ class CameraPerformanceMonitor(Node):
         self.declare_parameter('monitor_period_sec', 5.0)  # How often to update metrics
         self.declare_parameter('run_duration_sec', 30.0)  # Default 30 second monitoring duration
         self.declare_parameter('silent_mode', False)  # Allow terminal output by default
+        self.declare_parameter('monitor_system_resources', True)  # Monitor CPU and memory by default
         
         # Get parameters
         self.camera_topics = self.get_parameter('camera_topics').value
@@ -41,6 +49,21 @@ class CameraPerformanceMonitor(Node):
         self.monitor_period = self.get_parameter('monitor_period_sec').value
         self.run_duration = self.get_parameter('run_duration_sec').value
         self.silent_mode = self.get_parameter('silent_mode').value
+        self.monitor_resources = self.get_parameter('monitor_system_resources').value and HAVE_PSUTIL
+        
+        # System resource metrics
+        self.system_metrics = {
+            'cpu_percent': [],
+            'memory_percent': [],
+            'timestamps': []
+        }
+        
+        # Check if psutil is available and warn if we can't monitor system resources
+        if self.monitor_resources:
+            self.get_logger().info("System resource monitoring enabled (CPU and memory)")
+        elif self.get_parameter('monitor_system_resources').value and not HAVE_PSUTIL:
+            self.get_logger().warning("Cannot monitor system resources - psutil not available")
+            self.get_logger().warning("Install psutil with: pip install psutil")
         
         # Set up QoS - we want to detect drops so need appropriate QoS
         qos = QoSProfile(
@@ -87,11 +110,20 @@ class CameraPerformanceMonitor(Node):
         # Create timer for periodic reporting
         self.timer = self.create_timer(self.monitor_period, self.update_metrics)
         
+        # Create timer for resource monitoring (more frequent sampling)
+        if self.monitor_resources:
+            self.resource_timer = self.create_timer(1.0, self.sample_system_resources)
+        
         # File logging
         if self.log_to_file:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             self.log_file = open(f"camera_metrics_{timestamp}.csv", "w")
             self.log_file.write("timestamp,topic,frame_rate,avg_latency_ms,max_latency_ms,freeze_count,drop_rate\n")
+            
+            # Create separate resource log if monitoring resources
+            if self.monitor_resources:
+                self.resource_file = open(f"system_resources_{timestamp}.csv", "w")
+                self.resource_file.write("timestamp,cpu_percent,memory_percent\n")
             
         # Setup countdown and auto-shutdown
         self.start_time = time.time()
@@ -102,6 +134,24 @@ class CameraPerformanceMonitor(Node):
         print(f"\nPerformance test starting...")
         print(f"Press Ctrl+C to stop early and view results\n")
     
+    def sample_system_resources(self):
+        """Sample CPU and memory usage"""
+        try:
+            cpu_percent = psutil.cpu_percent(interval=None)  # Non-blocking call
+            memory_percent = psutil.virtual_memory().percent
+            
+            self.system_metrics['cpu_percent'].append(cpu_percent)
+            self.system_metrics['memory_percent'].append(memory_percent)
+            self.system_metrics['timestamps'].append(time.time())
+            
+            # Log resource data to file
+            if self.log_to_file and hasattr(self, 'resource_file'):
+                self.resource_file.write(f"{time.time()},{cpu_percent},{memory_percent}\n")
+                self.resource_file.flush()
+                
+        except Exception as e:
+            self.get_logger().warning(f"Error sampling system resources: {e}")
+    
     def countdown_tick(self):
         """Display countdown and shut down when time is up"""
         elapsed = time.time() - self.start_time
@@ -110,13 +160,21 @@ class CameraPerformanceMonitor(Node):
         # Show countdown every second
         if int(remaining) % 5 == 0 or remaining <= 5:
             # Use direct print instead of ROS logger for terminal visibility
-            print(f"Monitoring cameras: {int(remaining)} seconds remaining   ", end="\r", flush=True)
+            if self.monitor_resources:
+                # Include current CPU/memory usage in countdown if monitoring resources
+                cpu = self.system_metrics['cpu_percent'][-1] if self.system_metrics['cpu_percent'] else 0
+                mem = self.system_metrics['memory_percent'][-1] if self.system_metrics['memory_percent'] else 0
+                print(f"Monitoring cameras: {int(remaining)}s left | CPU: {cpu:.1f}% | Mem: {mem:.1f}%   ", end="\r", flush=True)
+            else:
+                print(f"Monitoring cameras: {int(remaining)} seconds remaining   ", end="\r", flush=True)
         
         # Time's up - report and shut down
         if elapsed >= self.run_duration:
             print("\nTest complete! Generating report...                    ")
             self.shutdown_timer.cancel()
             self.timer.cancel()
+            if self.monitor_resources and hasattr(self, 'resource_timer'):
+                self.resource_timer.cancel()
             self.report_final_metrics()
             threading.Timer(2.0, self.shutdown).start()  # Give time for metrics to be printed
     
@@ -126,6 +184,8 @@ class CameraPerformanceMonitor(Node):
             cv2.destroyAllWindows()
         if self.log_to_file and hasattr(self, 'log_file'):
             self.log_file.close()
+        if self.log_to_file and hasattr(self, 'resource_file'):
+            self.resource_file.close()
         self.get_logger().info("Performance monitoring completed")
         sys.exit(0)
     
@@ -196,7 +256,14 @@ class CameraPerformanceMonitor(Node):
             print("                                                                            ", end="\r")
             fps_info = " | ".join([f"{topic.split('/')[-2]}: {len(metrics['intervals'])>0 and 1.0/sum(metrics['intervals'][-10:])*min(10, len(metrics['intervals'])):.1f} fps" 
                                 for topic, metrics in self.metrics.items() if metrics['frame_count'] > 0])
-            print(f"Current FPS: {fps_info}", end="\r", flush=True)
+            
+            # Add resource info if available
+            if self.monitor_resources and self.system_metrics['cpu_percent']:
+                cpu = self.system_metrics['cpu_percent'][-1]
+                mem = self.system_metrics['memory_percent'][-1]
+                print(f"Current FPS: {fps_info} | CPU: {cpu:.1f}% | Mem: {mem:.1f}%", end="\r", flush=True)
+            else:
+                print(f"Current FPS: {fps_info}", end="\r", flush=True)
         
         # Log metrics to file
         for topic, metrics in self.metrics.items():
@@ -233,6 +300,20 @@ class CameraPerformanceMonitor(Node):
         print("="*80)
         
         print(f"Total monitoring duration: {now - self.start_time:.1f} seconds\n")
+        
+        # System resource metrics
+        if self.monitor_resources and self.system_metrics['cpu_percent']:
+            avg_cpu = sum(self.system_metrics['cpu_percent']) / len(self.system_metrics['cpu_percent'])
+            max_cpu = max(self.system_metrics['cpu_percent'])
+            avg_mem = sum(self.system_metrics['memory_percent']) / len(self.system_metrics['memory_percent'])
+            max_mem = max(self.system_metrics['memory_percent'])
+            
+            print("--- System Resource Usage ---")
+            print(f"  Average CPU Usage:   {avg_cpu:.1f}%")
+            print(f"  Maximum CPU Usage:   {max_cpu:.1f}%")
+            print(f"  Average Memory:      {avg_mem:.1f}%")
+            print(f"  Maximum Memory:      {max_mem:.1f}%")
+            print()
         
         # Track if any camera had zero frames
         zero_frame_cameras = []
@@ -283,9 +364,48 @@ class CameraPerformanceMonitor(Node):
             for topic in zero_frame_cameras:
                 print(f"  - {topic}")
         
-        print("="*80)
+        # Performance analysis and recommendations
+        print("\n--- Performance Analysis ---")
+        if self.monitor_resources and avg_cpu > 75:
+            print("⚠️ HIGH CPU USAGE: The system appears CPU-constrained during operation")
+            if avg_cpu > 90:
+                print("   RECOMMENDATION: Reduce the number of cameras or lower camera resolution/FPS")
+        
+        if self.monitor_resources and avg_mem > 80:
+            print("⚠️ HIGH MEMORY USAGE: The system is approaching memory limits")
+            print("   RECOMMENDATION: Check for memory leaks or reduce frame buffer sizes")
+        
+        high_latency_cameras = [topic for topic, metrics in self.metrics.items() 
+                               if metrics['latencies'] and max(metrics['latencies']) > 500]
+        if high_latency_cameras:
+            print("⚠️ HIGH LATENCY detected on these cameras:")
+            for topic in high_latency_cameras:
+                print(f"   - {topic}")
+            print("   RECOMMENDATION: Check network conditions and camera settings")
+        
+        high_drop_cameras = [topic for topic, metrics in self.metrics.items() 
+                            if metrics['frame_count'] > 0 and 
+                            metrics['dropped_frames'] / metrics['frame_count'] > 0.1]
+        if high_drop_cameras:
+            print("⚠️ HIGH DROP RATE detected on these cameras:")
+            for topic in high_drop_cameras:
+                print(f"   - {topic}")
+            print("   RECOMMENDATION: Use TCP transport for RTSP streams or check network bandwidth")
+            
+        high_freeze_cameras = [topic for topic, metrics in self.metrics.items() 
+                              if metrics['freeze_count'] > 5]
+        if high_freeze_cameras:
+            print("⚠️ FREQUENT FREEZES detected on these cameras:")
+            for topic in high_freeze_cameras:
+                print(f"   - {topic}")
+            print("   RECOMMENDATION: Check if camera settings match system capabilities")
+            
+        # Log file info
+        print("\n" + "="*80)
         if self.log_to_file:
-            print(f"Detailed metrics saved to: {self.log_file.name}")
+            print(f"Detailed camera metrics saved to: {self.log_file.name}")
+            if self.monitor_resources:
+                print(f"System resource data saved to:  {self.resource_file.name}")
     
     def destroy_node(self):
         """Clean up resources when node is shut down."""
@@ -293,6 +413,8 @@ class CameraPerformanceMonitor(Node):
             cv2.destroyAllWindows()
         if self.log_to_file and hasattr(self, 'log_file'):
             self.log_file.close()
+        if self.log_to_file and hasattr(self, 'resource_file'):
+            self.resource_file.close()
         super().destroy_node()
 
 
