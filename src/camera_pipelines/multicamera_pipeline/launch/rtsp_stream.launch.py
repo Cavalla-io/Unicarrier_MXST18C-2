@@ -7,29 +7,11 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # Define launch arguments - only keep essential ones
+    # Define launch arguments
     rtsp_url_arg = DeclareLaunchArgument(
         'rtsp_url',
-        default_value='rtsp://192.168.2.250:554/stream',
+        default_value='rtsp://admin:admin@192.168.2.250:554/stream',
         description='URL of the RTSP stream'
-    )
-    
-    frame_rate_arg = DeclareLaunchArgument(
-        'frame_rate',
-        default_value='30.0',
-        description='Frame rate for capturing and publishing (Hz)'
-    )
-    
-    image_width_arg = DeclareLaunchArgument(
-        'image_width',
-        default_value='640',
-        description='Width of the image in pixels'
-    )
-    
-    image_height_arg = DeclareLaunchArgument(
-        'image_height',
-        default_value='480',
-        description='Height of the image in pixels'
     )
     
     topic_name_arg = DeclareLaunchArgument(
@@ -40,8 +22,8 @@ def generate_launch_description():
     
     pipeline_type_arg = DeclareLaunchArgument(
         'pipeline_type',
-        default_value='1',
-        description='Pipeline type (1-4): 1=UDP ultra-low latency, 2=Alternative optimized, 3=Hardware acceleration (if available), 4=Direct TCP'
+        default_value='4',  # Use TCP pipeline by default
+        description='Pipeline type (1-4): 1=UDP, 2=TCP, 3=UDP with queue, 4=TCP with queue'
     )
     
     # Create node
@@ -51,11 +33,11 @@ def generate_launch_description():
         name='rtsp_stream_node',
         parameters=[{
             'rtsp_url': LaunchConfiguration('rtsp_url'),
-            'frame_rate': LaunchConfiguration('frame_rate'),
-            'image_width': LaunchConfiguration('image_width'),
-            'image_height': LaunchConfiguration('image_height'),
             'topic_name': LaunchConfiguration('topic_name'),
             'pipeline_type': LaunchConfiguration('pipeline_type'),
+            'frame_rate': 20.0,  # Update to match the actual stream frame rate
+            'image_width': 800,  # Match the actual stream resolution
+            'image_height': 448,  # Match the actual stream resolution
         }],
         output='screen',
     )
@@ -65,13 +47,10 @@ def generate_launch_description():
     
     # Add launch arguments
     ld.add_action(rtsp_url_arg)
-    ld.add_action(frame_rate_arg)
-    ld.add_action(image_width_arg)
-    ld.add_action(image_height_arg)
     ld.add_action(topic_name_arg)
     ld.add_action(pipeline_type_arg)
     
-    # Add nodes to launch description
+    # Add node to launch description
     ld.add_action(rtsp_node)
     
     return ld 

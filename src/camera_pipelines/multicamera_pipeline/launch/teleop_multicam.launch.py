@@ -54,13 +54,13 @@ def launch_setup(context, *args, **kwargs):
             "rtsp_url": "rtsp://192.168.2.250:554/stream",
             "topic_name": "rtsp_camera1/image_raw",
             "frame_rate": "30.0",
-            "pipeline_type": "2",  # Use alternative pipeline
+            "pipeline_type": "4",  # Use TCP pipeline for better reliability
         },
         {
             "rtsp_url": "rtsp://192.168.2.244:554/stream",
             "topic_name": "rtsp_camera2/image_raw",
             "frame_rate": "30.0",
-            "pipeline_type": "4",  # Use TCP pipeline
+            "pipeline_type": "4",  # Use TCP pipeline for better reliability
         },
     ]
     
@@ -94,7 +94,7 @@ def launch_setup(context, *args, **kwargs):
                 'frame_rate': 30.0,
                 'image_width': 640,
                 'image_height': 480,
-                'pipeline_type': 1,
+                'pipeline_type': 4,  # Use TCP pipeline for better reliability
             }],
             output='screen',
         ),
@@ -108,7 +108,7 @@ def launch_setup(context, *args, **kwargs):
                 'frame_rate': 30.0,
                 'image_width': 640,
                 'image_height': 480,
-                'pipeline_type': 3,  # Try hardware acceleration if available
+                'pipeline_type': 4,  # Use TCP pipeline for better reliability
             }],
             output='screen',
         ),
