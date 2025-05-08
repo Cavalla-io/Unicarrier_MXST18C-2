@@ -5,7 +5,9 @@ from launch import LaunchDescription
 from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
+    DeclareLaunchArgument,
 )
+from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
@@ -14,6 +16,9 @@ def launch_setup(context, *args, **kwargs):
     # Get package directories
     multicamera_prefix = get_package_share_directory("multicamera_pipeline")
     depthai_prefix = get_package_share_directory("depthai_ros_driver")
+    
+    # Get launch parameters
+    silent_mode = LaunchConfiguration('silent_mode')
     
     # Use our PoE-optimized configuration file
     params_file = os.path.join(multicamera_prefix, "config", "poe_cameras.yaml")
@@ -59,8 +64,9 @@ def launch_setup(context, *args, **kwargs):
                 'image_width': 640,
                 'image_height': 480,
                 'pipeline_type': 4,  # Use TCP pipeline for better reliability
+                'silent_mode': silent_mode,
             }],
-            output='screen',
+            output='log',  # Redirect output to log files instead of terminal
         ),
         Node(
             package='multicamera_pipeline',
@@ -73,8 +79,9 @@ def launch_setup(context, *args, **kwargs):
                 'image_width': 640,
                 'image_height': 480,
                 'pipeline_type': 4,  # Use TCP pipeline for better reliability
+                'silent_mode': silent_mode,
             }],
-            output='screen',
+            output='log',  # Redirect output to log files instead of terminal
         ),
     ]
     
@@ -85,8 +92,16 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
+    # Declare launch arguments
+    silent_arg = DeclareLaunchArgument(
+        'silent_mode',
+        default_value='true',
+        description='Run in silent mode with minimal terminal output'
+    )
+    
     return LaunchDescription(
         [
+            silent_arg,
             OpaqueFunction(function=launch_setup),
         ]
     )

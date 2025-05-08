@@ -19,9 +19,6 @@ class RtspStreamNode(Node):
     def __init__(self):
         super().__init__('rtsp_stream_node')
         
-        # Set logging level to WARN to only show warnings and errors
-        self.get_logger().set_level(rclpy.logging.LoggingSeverity.WARN)
-        
         # Declare and get only necessary parameters
         self.declare_parameter('rtsp_url', 'rtsp://192.168.2.250:554/stream')
         self.declare_parameter('frame_rate', 20.0)  # Hz, updated to match camera specs
@@ -29,6 +26,7 @@ class RtspStreamNode(Node):
         self.declare_parameter('image_height', 448)  # Match actual stream resolution
         self.declare_parameter('topic_name', 'camera/image_raw')
         self.declare_parameter('pipeline_type', 4)  # Use TCP pipeline by default
+        self.declare_parameter('silent_mode', True)  # Completely silent mode by default
         
         self.rtsp_url = self.get_parameter('rtsp_url').get_parameter_value().string_value
         self.frame_rate = self.get_parameter('frame_rate').get_parameter_value().double_value
@@ -36,6 +34,19 @@ class RtspStreamNode(Node):
         self.height = self.get_parameter('image_height').get_parameter_value().integer_value
         self.topic_name = self.get_parameter('topic_name').get_parameter_value().string_value
         self.pipeline_type = self.get_parameter('pipeline_type').get_parameter_value().integer_value
+        self.silent_mode = self.get_parameter('silent_mode').get_parameter_value().bool_value
+        
+        # Set proper logging level based on silent mode
+        if self.silent_mode:
+            # Almost completely silent - only fatal errors
+            self.get_logger().set_level(rclpy.logging.LoggingSeverity.FATAL)
+            # Suppress OpenCV/GStreamer warnings by redirecting stderr
+            os.environ["OPENCV_LOG_LEVEL"] = "FATAL"
+            # Completely disable GStreamer debug output
+            os.environ["GST_DEBUG"] = "0"
+        else:
+            # Show errors only (still quiet but reports problems)
+            self.get_logger().set_level(rclpy.logging.LoggingSeverity.ERROR)
         
         # Create QoS profile for reliable communication with volatile durability
         qos_profile = QoSProfile(
@@ -57,10 +68,9 @@ class RtspStreamNode(Node):
         
         # Check for hardware acceleration
         self.has_vaapi = self._check_for_vaapi()
-        self.get_logger().info(f"Hardware acceleration (VAAPI): {'Available' if self.has_vaapi else 'Not available'}")
         
-        # Create a timer for diagnostics (only log if there are issues)
-        self.timer = self.create_timer(5.0, self.timer_callback)
+        # Create a timer for diagnostics (but don't log frequently)
+        self.timer = self.create_timer(30.0, self.timer_callback)
         
         # Performance metrics
         self.frame_count = 0
@@ -73,13 +83,12 @@ class RtspStreamNode(Node):
         # Flush any buffered frames on the network interface for this camera
         self._flush_network_buffer()
         
+        # Only report that we're starting
+        if not self.silent_mode:
+            self.get_logger().info(f"Starting RTSP stream from {self.rtsp_url} to {self.topic_name}")
+        
         # Start capturing frames
         self.start_capture()
-        
-        self.get_logger().info(f"RTSP Stream Node initialized with URL: {self.rtsp_url}")
-        self.get_logger().info(f"Publishing to topic: {self.topic_name}")
-        self.get_logger().info(f"Using pipeline type: {self.pipeline_type}")
-        self.get_logger().info("Ultra-low latency mode enabled")
 
     def _check_for_vaapi(self):
         """Check if VAAPI hardware acceleration is available"""
@@ -103,14 +112,12 @@ class RtspStreamNode(Node):
             ip_match = re.search(r'@?([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', self.rtsp_url)
             if ip_match:
                 ip = ip_match.group(1)
-                # Attempt to flush network buffers
-                self.get_logger().info(f"Flushing network buffers for {ip}")
+                # Attempt to flush network buffers - do silently now
                 os.system(f"ping -c 1 {ip} > /dev/null")  # Wake up the connection
                 os.system(f"sudo ip neigh flush {ip} > /dev/null 2>&1")  # Flush ARP cache
-            else:
-                self.get_logger().warn("Could not extract IP from RTSP URL for buffer flushing")
         except Exception as e:
-            self.get_logger().error(f"Error flushing network buffer: {str(e)}")
+            if not self.silent_mode:
+                self.get_logger().error(f"Error flushing network buffer: {str(e)}")
 
     def start_capture(self):
         if not self.is_running:
@@ -118,12 +125,11 @@ class RtspStreamNode(Node):
             self.capture_thread = threading.Thread(target=self.capture_frames)
             self.capture_thread.daemon = True
             self.capture_thread.start()
-            self.get_logger().info("Capture thread started")
 
     def get_pipeline_string(self, pipeline_type: int) -> str:
         """Get the GStreamer pipeline string based on the pipeline type."""
-        # Increase GStreamer debug level for more verbose output
-        os.environ["GST_DEBUG"] = "3,rtspsrc:5,rtph265depay:5,h265parse:5,avdec_h265:5"
+        # Reduce GStreamer debug level to prevent console spam
+        os.environ["GST_DEBUG"] = "0"
         
         # Create a simpler pipeline specifically for this camera
         return (
@@ -141,13 +147,11 @@ class RtspStreamNode(Node):
         
         while rclpy.ok():
             try:
-                # Set GStreamer debug level for more verbose output
-                os.environ["GST_DEBUG"] = "3,rtspsrc:5,rtph265depay:5,h265parse:5,avdec_h265:5"
+                # Set GStreamer debug level to 0 to prevent console spam
+                os.environ["GST_DEBUG"] = "0"
                 
                 # Create pipeline
                 pipeline_str = self.get_pipeline_string(self.pipeline_type)
-                self.get_logger().warn(f"Attempting to open RTSP stream at {self.rtsp_url}")
-                self.get_logger().warn(f"Pipeline: {pipeline_str}")
                 
                 # Open stream with timeout
                 cap = cv2.VideoCapture(pipeline_str, cv2.CAP_GSTREAMER)
@@ -159,16 +163,18 @@ class RtspStreamNode(Node):
                 if not ret or frame is None:
                     raise RuntimeError("Failed to read initial frame from stream")
                 
-                self.get_logger().info(f"Successfully connected to RTSP stream at {self.rtsp_url}")
+                # Only report once we're successfully connected and received the first frame
+                if not self.silent_mode:
+                    self.get_logger().info(f"Successfully connected to {self.rtsp_url}, now streaming to {self.topic_name}")
                 consecutive_failures = 0  # Reset failure counter on successful connection
                 
-                # Main capture loop
+                # Main capture loop - runs silently unless errors occur
+                frame_counter = 0
                 while rclpy.ok():
-                    start_time = time.time()
-                    
                     ret, frame = cap.read()
                     if not ret or frame is None:
-                        self.get_logger().warn("Failed to read frame from stream")
+                        if not self.silent_mode:
+                            self.get_logger().error("Failed to read frame from stream")
                         break
                     
                     # Convert frame to ROS message
@@ -177,51 +183,51 @@ class RtspStreamNode(Node):
                         msg.header.stamp = self.get_clock().now().to_msg()
                         self.publisher.publish(msg)
                         self.frame_count += 1
-                        
-                        # Calculate and log FPS
-                        frame_time = time.time() - start_time
-                        self.fps = 1.0 / frame_time if frame_time > 0 else 0
-                        
-                        if self.fps < 5.0:  # Only warn for very low FPS
-                            self.get_logger().warn(f"Low FPS detected: {self.fps:.2f}")
-                        
+                        frame_counter += 1
                     except Exception as e:
-                        self.get_logger().warn(f"Error converting/publishing frame: {str(e)}")
+                        if not self.silent_mode:
+                            self.get_logger().error(f"Error converting/publishing frame: {str(e)}")
                 
                 # If we break out of the inner loop, release the capture
                 cap.release()
                 
             except Exception as e:
                 consecutive_failures += 1
-                self.get_logger().warn(f"Error in capture loop (attempt {consecutive_failures}/{max_consecutive_failures}): {str(e)}")
+                if not self.silent_mode:
+                    self.get_logger().error(f"Error in capture loop (attempt {consecutive_failures}/{max_consecutive_failures}): {str(e)}")
                 
                 # Clean up resources
                 if 'cap' in locals() and cap is not None:
                     cap.release()
                 
                 if consecutive_failures >= max_consecutive_failures:
-                    self.get_logger().error(f"Too many consecutive failures ({consecutive_failures}), giving up")
+                    if not self.silent_mode:
+                        self.get_logger().error(f"Too many consecutive failures ({consecutive_failures}), giving up")
                     break
                     
                 # Wait before retrying
                 time.sleep(reconnect_delay)
 
     def timer_callback(self):
-        # Display frame rate and other diagnostics
+        # Only log FPS if it's abnormally low to indicate a potential problem
         current_time = time.time()
         elapsed = current_time - self.last_log_time
         
         if elapsed > 0:
             fps = self.frame_count / elapsed
             self.last_fps = fps
-            self.get_logger().info(f"Publishing at {fps:.2f} FPS")
+            
+            # Only log if FPS is very low (potential problem) and not in silent mode
+            if fps < 5.0 and not self.silent_mode:
+                self.get_logger().warn(f"Low frame rate detected: {fps:.2f} FPS")
             
             # Reset counters
             self.frame_count = 0
             self.last_log_time = current_time
 
     def destroy_node(self):
-        self.get_logger().info("Shutting down RTSP Stream Node")
+        if not self.silent_mode:
+            self.get_logger().info(f"Shutting down RTSP stream from {self.rtsp_url}")
         self.is_running = False
         
         # Wait for capture thread to finish
@@ -245,7 +251,6 @@ def main(args=None):
     
     # Setup clean shutdown
     def signal_handler(sig, frame):
-        node.get_logger().info("Received interrupt signal, shutting down...")
         node.destroy_node()
         # Don't call rclpy.shutdown() here, it will be called below
         sys.exit(0)
@@ -257,7 +262,7 @@ def main(args=None):
         rclpy.spin(node)
     except KeyboardInterrupt:
         # This won't be called with our signal handler, but keep as a fallback
-        node.get_logger().info("Keyboard interrupt received")
+        pass
     finally:
         # Clean up node resources
         node.destroy_node()
