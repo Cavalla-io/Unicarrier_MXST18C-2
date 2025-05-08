@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -6,7 +7,8 @@ from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
     DeclareLaunchArgument,
-    LogInfo
+    LogInfo,
+    SetEnvironmentVariable
 )
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -44,7 +46,7 @@ def launch_setup(context, *args, **kwargs):
                 "enable_depth": "false",  # Disable depth processing
                 "rsp_use_composition": "false",  # Disable composition
                 "use_rviz": "false",  # Disable RViz visualization
-                "camera_model": "OAK-D-PRO-POE-NO-IMU",  # Specify custom camera model without IMU/stereo
+                "camera_model": "OAK-D-PRO-POE-REDUCED",  # Use custom reduced model name
                 "imu_from_descr": "false",  # Disable IMU frames from URDF
                 "publish_tf_from_calibration": "false",  # Disable publishing TF from calibration
                 "log_level": "fatal",  # Only show fatal errors
@@ -54,6 +56,7 @@ def launch_setup(context, *args, **kwargs):
                 "debug": "false",  # Disable all debug output
                 "launch_prefix": "",  # No additional prefix
                 "base_frame": "",  # Empty base frame to minimize TF messages
+                "disable_image_transport_plugins": "true",  # Explicitly disable image transport plugins
             }.items(),
         )
         nodes.append(node)
@@ -68,13 +71,22 @@ def launch_setup(context, *args, **kwargs):
             parameters=[{
                 'rtsp_url': 'rtsp://192.168.2.250:554/stream',
                 'topic_name': 'rtsp_camera1/image_raw',
-                'frame_rate': 30.0,
+                'frame_rate': 15.0,  # Reduced frame rate for reliability
                 'image_width': 640,
                 'image_height': 480,
                 'pipeline_type': 4,  # Use TCP pipeline for better reliability
                 'silent_mode': silent_mode,
+                'connection_retry_interval': 5,  # Wait 5 seconds between retries
+                'max_connection_attempts': 20,  # Maximum retry attempts
+                "use_sim_time": False
             }],
             output='log',  # Redirect output to log files instead of terminal
+            remappings=[
+                # Disable all possible image transport plugins
+                ('/rtsp_camera1/image_raw/compressed', '/rtsp_camera1/disabled_compressed'),
+                ('/rtsp_camera1/image_raw/compressedDepth', '/rtsp_camera1/disabled_compressedDepth'),
+                ('/rtsp_camera1/image_raw/theora', '/rtsp_camera1/disabled_theora'),
+            ],
         ),
         Node(
             package='multicamera_pipeline',
@@ -83,13 +95,22 @@ def launch_setup(context, *args, **kwargs):
             parameters=[{
                 'rtsp_url': 'rtsp://192.168.2.244:554/stream',
                 'topic_name': 'rtsp_camera2/image_raw',
-                'frame_rate': 30.0,
+                'frame_rate': 15.0,  # Reduced frame rate for reliability
                 'image_width': 640,
                 'image_height': 480,
                 'pipeline_type': 4,  # Use TCP pipeline for better reliability
                 'silent_mode': silent_mode,
+                'connection_retry_interval': 5,  # Wait 5 seconds between retries
+                'max_connection_attempts': 20,  # Maximum retry attempts
+                "use_sim_time": False
             }],
             output='log',  # Redirect output to log files instead of terminal
+            remappings=[
+                # Disable all possible image transport plugins
+                ('/rtsp_camera2/image_raw/compressed', '/rtsp_camera2/disabled_compressed'),
+                ('/rtsp_camera2/image_raw/compressedDepth', '/rtsp_camera2/disabled_compressedDepth'),
+                ('/rtsp_camera2/image_raw/theora', '/rtsp_camera2/disabled_theora'),
+            ],
         ),
     ]
     
@@ -107,9 +128,23 @@ def generate_launch_description():
         description='Run in silent mode with minimal terminal output'
     )
     
+    # Set environment variables to disable image_transport plugins globally
+    disable_compressed = SetEnvironmentVariable(
+        'ROS_IMAGE_TRANSPORT_DISABLE_COMPRESSED', 'true'
+    )
+    disable_compressed_depth = SetEnvironmentVariable(
+        'ROS_IMAGE_TRANSPORT_DISABLE_COMPRESSEDDEPTH', 'true'
+    )
+    disable_theora = SetEnvironmentVariable(
+        'ROS_IMAGE_TRANSPORT_DISABLE_THEORA', 'true'
+    )
+    
     return LaunchDescription(
         [
             silent_arg,
+            disable_compressed,
+            disable_compressed_depth,
+            disable_theora,
             OpaqueFunction(function=launch_setup),
         ]
     )

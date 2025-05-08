@@ -5,11 +5,10 @@
       # Camera at 192.168.2.30 with MXID 18443010C142E7F400
       i_mx_id: 18443010C142E7F400  # Using MX ID for reliable identification
       # i_ip: "192.168.2.30"  # IP can be unreliable, using MX ID is better
-      i_ip: ""  # Using auto-discovery is more reliable
+      i_mx_id_ignore_list: ["18443010D1DEE7F400"]  # Explicitly ignore the fork camera
       i_nn_type: NONE
       i_pipeline_type: RGB  # RGB-only pipeline (no stereo)
       i_enable_imu: false  # Disable IMU
-      i_usb_speed: LOW  # Use lowest USB speed
       i_enable_diagnostics: false  # Disable diagnostic publishers
       i_restart_on_diagnostics_error: true  # auto-restart on errors
       i_publish_tf_from_calibration: false  # Disable TF publishing from calibration
@@ -48,9 +47,8 @@
   ros__parameters:
     camera:
       # Camera at 192.168.2.25 with MXID 18443010D1DEE7F400
-      # Auto-discovery works better than specifying IP directly
-      # i_mx_id: 18443010D1DEE7F400  # Don't specify MX ID to allow auto-discovery
-      i_ip: ""  # Empty to force auto-discovery - this worked!
+      i_mx_id: 18443010D1DEE7F400  # Don't specify MX ID to allow auto-discovery
+      i_mx_id_ignore_list: ["18443010C142E7F400"]
       i_nn_type: NONE
       i_pipeline_type: RGB  # RGB-only pipeline (no stereo)
       i_enable_imu: false  # Disable IMU
