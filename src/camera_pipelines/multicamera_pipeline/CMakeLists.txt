@@ -160,6 +160,13 @@ install(
   RENAME rtsp_stream_node
 )
 
+install(
+  PROGRAMS
+  scripts/camera_performance_monitor.py  
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME camera_performance_monitor
+)
+
 # install(TARGETS ${PROJECT_NAME}  ${SENSOR_LIB_NAME}
 # ${NN_LIB_NAME}
 # ${COMMON_LIB_NAME}
