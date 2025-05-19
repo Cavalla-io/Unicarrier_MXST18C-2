@@ -80,7 +80,7 @@ def launch_setup(context, *args, **kwargs):
                 'max_connection_attempts': 20,  # Maximum retry attempts
                 "use_sim_time": False
             }],
-            output='log',  # Redirect output to log files instead of terminal
+            output='screen',  # Change to screen to see debug output
             remappings=[
                 # Disable all possible image transport plugins
                 ('/rtsp_camera1/image_raw/compressed', '/rtsp_camera1/disabled_compressed'),
@@ -104,7 +104,7 @@ def launch_setup(context, *args, **kwargs):
                 'max_connection_attempts': 20,  # Maximum retry attempts
                 "use_sim_time": False
             }],
-            output='log',  # Redirect output to log files instead of terminal
+            output='screen',  # Change to screen to see debug output
             remappings=[
                 # Disable all possible image transport plugins
                 ('/rtsp_camera2/image_raw/compressed', '/rtsp_camera2/disabled_compressed'),
@@ -121,30 +121,29 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
+    # Set GStreamer debug environment variables
+    gst_debug = SetEnvironmentVariable(
+        name='GST_DEBUG',
+        value='4,rtspsrc:5,rtph265depay:5,h265parse:5,avdec_h265:5'
+    )
+    
+    gst_debug_dot = SetEnvironmentVariable(
+        name='GST_DEBUG_DUMP_DOT_DIR',
+        value='/home/cavalla/gstreamer_pipeline'
+    )
+    
     # Declare launch arguments
     silent_arg = DeclareLaunchArgument(
         'silent_mode',
-        default_value='true',
+        default_value='false',  # Change to false to see debug output
         description='Run in silent mode with minimal terminal output'
-    )
-    
-    # Set environment variables to disable image_transport plugins globally
-    disable_compressed = SetEnvironmentVariable(
-        'ROS_IMAGE_TRANSPORT_DISABLE_COMPRESSED', 'true'
-    )
-    disable_compressed_depth = SetEnvironmentVariable(
-        'ROS_IMAGE_TRANSPORT_DISABLE_COMPRESSEDDEPTH', 'true'
-    )
-    disable_theora = SetEnvironmentVariable(
-        'ROS_IMAGE_TRANSPORT_DISABLE_THEORA', 'true'
     )
     
     return LaunchDescription(
         [
+            gst_debug,
+            gst_debug_dot,
             silent_arg,
-            disable_compressed,
-            disable_compressed_depth,
-            disable_theora,
             OpaqueFunction(function=launch_setup),
         ]
     )

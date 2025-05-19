@@ -20,15 +20,15 @@
     imu:
       i_publish_topic: false  # Don't publish IMU topic
     rgb:
-      i_fps: 10.0
-      i_width: 1280
-      i_height: 720
+      i_fps: 20.0
+      i_width: 640
+      i_height: 360
       i_output_isp: false
       i_low_bandwidth: true
       i_low_quality: false
       i_preview_size: 300
       i_rectify: false  # Disable image rectification
-      i_publish_compressed: false # Don't enable compressed image publishing
+      i_publish_compressed: false # Don't enable compressed image publishing LOOK HERE
       i_low_bandwidth_quality: 80  # Set compression quality (0-100)
       i_max_q_size: 2  # Reduce queue size for lower latency/memory usage
       i_interleaved: false  # Use non-interleaved format
@@ -64,7 +64,7 @@
     imu:
       i_publish_topic: false  # Don't publish IMU topic
     rgb:
-      i_fps: 10.0
+      i_fps: 20.0
       i_width: 1280
       i_height: 720
       i_output_isp: false
