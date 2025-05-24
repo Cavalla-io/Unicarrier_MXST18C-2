@@ -71,7 +71,7 @@ def launch_setup(context, *args, **kwargs):
             parameters=[{
                 'rtsp_url': 'rtsp://192.168.2.250:554/stream',
                 'topic_name': 'rtsp_camera1/image_raw',
-                'frame_rate': 15.0,  # Reduced frame rate for reliability
+                'frame_rate': 5.0,  # Reduced frame rate for reliability
                 'image_width': 640,
                 'image_height': 480,
                 'pipeline_type': 4,  # Use TCP pipeline for better reliability
@@ -95,7 +95,7 @@ def launch_setup(context, *args, **kwargs):
             parameters=[{
                 'rtsp_url': 'rtsp://192.168.2.244:554/stream',
                 'topic_name': 'rtsp_camera2/image_raw',
-                'frame_rate': 15.0,  # Reduced frame rate for reliability
+                'frame_rate': 5.0,  # Reduced frame rate for reliability
                 'image_width': 640,
                 'image_height': 480,
                 'pipeline_type': 4,  # Use TCP pipeline for better reliability
