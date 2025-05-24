@@ -33,6 +33,10 @@ ros2_ws/install/
 ros2_ws/build/
 ros2_ws/log/
 
+# Ignore upstream depthai sources and local backups
+src/depthai-ros/
+src/depthai_ros_driver_src.bak/
+
 # Other system-generated files
 .DS_Store
 Thumbs.db
