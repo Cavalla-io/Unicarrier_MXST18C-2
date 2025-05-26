@@ -38,6 +38,7 @@ def make_pipeline(fps: int = 30) -> dai.Pipeline:
 
     enc = pipe.createVideoEncoder()
     enc.setDefaultProfilePreset(fps, dai.VideoEncoderProperties.Profile.H265_MAIN)
+    enc.setRateControl(dai.VideoEncoderProperties.RateControlMode.CBR, 4_000_000, 30)
     cam.video.link(enc.input)
 
     xout = pipe.createXLinkOut()
@@ -57,7 +58,9 @@ def spawn_rtsp_server(port: int, mount: str) -> GstRtspServer.RTSPMediaFactory:
     factory = GstRtspServer.RTSPMediaFactory()
     factory.set_launch(
         "( appsrc name=src is-live=true do-timestamp=true format=time "
-        "! h265parse ! rtph265pay config-interval=1 name=pay0 pt=96 )"
+        "! queue max-size-buffers=2 leaky=downstream "
+        "! h265parse "
+        "! rtph265pay config-interval=1 name=pay0 pt=96 )"
     )
     factory.set_shared(True)
     server.get_mount_points().add_factory(f"/{mount}", factory)
@@ -82,7 +85,7 @@ def main() -> None:
     except RuntimeError as exc:
         sys.exit(f"Failed to connect to OAK device ({exc})")
 
-    q = dev.getOutputQueue("h265", maxSize=30, blocking=False)
+    q = dev.getOutputQueue("h265", maxSize=2, blocking=False)
 
     # ----------- Start RTSP server ----------------------------------------- #
     factory = spawn_rtsp_server(args.port, args.mount)
