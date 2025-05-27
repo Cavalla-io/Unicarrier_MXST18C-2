@@ -1,8 +1,13 @@
+#!/usr/bin/env python3
+
 import rclpy
 from rclpy.node import Node
 from livox_ros_driver2.srv import SetExtrinsicParameters, SetImuParameters
 import numpy as np
 from typing import Dict, List
+from std_msgs.msg import String
+import os
+import time
 
 # Define LiDAR positions and orientations
 LIDAR_CONFIG = {
@@ -23,12 +28,25 @@ LIDAR_CONFIG = {
     }
 }
 
-class LivoxSetupNode(Node):
+class SetupLivoxNode(Node):
     def __init__(self):
-        super().__init__('livox_setup_node')
+        super().__init__('setup_livox_node')
+        self.get_logger().info('Livox Setup Node started')
+        
+        # Create timer for setup process
+        self.timer = self.create_timer(1.0, self.setup_process)
+        self.setup_complete = False
+        
+        # Status publisher
+        self.status_pub = self.create_publisher(
+            String,
+            '/livox/setup_status',
+            10
+        )
+        
         self.clients = {}
         self.setup_clients()
-        
+
     def setup_clients(self):
         # Create service clients for each LiDAR
         for lidar_name in LIDAR_CONFIG.keys():
@@ -50,6 +68,29 @@ class LivoxSetupNode(Node):
             while not self.clients[lidar_name]['imu'].wait_for_service(timeout_sec=1.0):
                 self.get_logger().info(f'Waiting for {lidar_name} IMU service...')
                 
+    def setup_process(self):
+        if self.setup_complete:
+            self.timer.cancel()
+            return
+            
+        self.get_logger().info('Setting up Livox LiDARs...')
+        
+        # Perform setup steps for the LiDARs
+        try:
+            # Example setup actions:
+            # 1. Check if LiDARs are connected
+            # 2. Configure LiDAR settings
+            # 3. Verify configuration
+            
+            self.configure_all_lidars()
+            self.status_pub.publish(String(data="Setup completed successfully"))
+            self.get_logger().info('Livox LiDARs setup completed')
+            self.setup_complete = True
+            
+        except Exception as e:
+            self.get_logger().error(f'Error setting up Livox LiDARs: {str(e)}')
+            self.status_pub.publish(String(data=f"Setup failed: {str(e)}"))
+
     def configure_lidar(self, lidar_name: str):
         config = LIDAR_CONFIG[lidar_name]
         
@@ -92,9 +133,9 @@ class LivoxSetupNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = LivoxSetupNode()
+    node = SetupLivoxNode()
     try:
-        node.configure_all_lidars()
+        rclpy.spin(node)
     except KeyboardInterrupt:
         pass
     finally:
