@@ -149,14 +149,16 @@ def spawn_rtsp_server(port: int, mount: str) -> GstRtspServer.RTSPMediaFactory:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ip", help="PoE IP or MXID (USB).  Omit for first detected device.")
+    # ap.add_argument("--ip", help="PoE IP or MXID (USB).  Omit for first detected device.")
     ap.add_argument("--port", default=8554, type=int, help="RTSP TCP port")
+    ap.add_argument("--mxid", help="MXID (more reliable than IP).  Omit for first detected device.")
     ap.add_argument("--mount", default="oak", help="RTSP mount point (eg. front_camera)")
     ap.add_argument("--fps", default=30, type=int, help="Camera frame-rate")
     ap.add_argument("--buffer-size", default=1, type=int, help="Output queue buffer size")
     args = ap.parse_args()
 
-    device_info = dai.DeviceInfo(args.ip) if args.ip else None
+    # device_info = dai.DeviceInfo(args.ip) if args.ip else None
+    device_info = dai.DeviceInfo(args.mxid) if args.mxid else None
     pipe = make_pipeline(args.fps)
 
     # ----------- Start DepthAI device -------------------------------------- #
