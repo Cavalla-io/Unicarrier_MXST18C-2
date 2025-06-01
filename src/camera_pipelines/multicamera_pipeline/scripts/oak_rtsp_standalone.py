@@ -3,8 +3,8 @@
 Minimal RTSP streamer for one Luxonis OAK camera
 (no ROS, no GStreamer CLI).  Launch one copy per camera:
 
-    python3 oak_rtsp_standalone.py --ip 192.168.2.30 --port 8554 --mount front_camera
-    python3 oak_rtsp_standalone.py --ip 192.168.2.25 --port 8555 --mount fork_camera
+    python3 oak_rtsp_standalone.py --mxid 18443010C142E7F400 --port 8554 --mount front_camera
+    python3 oak_rtsp_standalone.py --mxid 18443010D1DEE7F400  --port 8555 --mount fork_camera
 
 Streams appear at   rtsp://<this-host>:8554/<mount>
 """
