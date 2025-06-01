@@ -19,6 +19,7 @@ CMakeFiles/
 *.pyc
 *.pyo
 __pycache__/
+venv/
 
 # VSCode settings (optional)
 .vscode/
