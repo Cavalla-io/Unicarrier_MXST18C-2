@@ -34,8 +34,8 @@ class LiftController:
         drive_byte = 0x02  # neutral drive
         # Process lift commands:
         if cmd["lift"]:
-            current_state = 0xFF
-            current_action = 0x07
+            current_state = 0x14
+            current_action = 0x01
         elif cmd["lower"]:
             current_state = 0x00
             # Update lowering speed from input listener

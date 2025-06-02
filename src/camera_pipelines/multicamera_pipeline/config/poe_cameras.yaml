@@ -49,7 +49,7 @@
     camera:
       # Camera at 192.168.2.25 with MXID 18443010D1DEE7F400
       # Auto-discovery works better than specifying IP directly
-      # i_mx_id: 18443010D1DEE7F400  # Don't specify MX ID to allow auto-discovery
+      i_mx_id: 18443010D1DEE7F400  # Don't specify MX ID to allow auto-discovery
       i_ip: ""  # Empty to force auto-discovery - this worked!
       i_nn_type: NONE
       i_pipeline_type: RGB  # RGB-only pipeline (no stereo)

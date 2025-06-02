@@ -26,18 +26,57 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Set real-time priority (commented out due to permission issues)
-# try:
-#     # Set nice value
-#     os.nice(-20)
-#
-#     # Set resource limits
-#     resource.setrlimit(resource.RLIMIT_RTPRIO, (99, 99))
-#     resource.setrlimit(resource.RLIMIT_MEMLOCK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
-#
-#     logger.info("Real-time scheduling enabled")
-# except Exception as e:
-#     logger.warning(f"Could not set real-time priority: {e}")
+# Performance optimization - try different approaches with fallbacks
+try:
+    # Try to set nice value - negative for higher priority but not too extreme
+    os.nice(-5)  # Less aggressive than -20 but still improves priority
+    logger.info("Process priority adjusted")
+except Exception as e:
+    logger.warning(f"Could not set process priority: {e}")
+
+# Try to set thread scheduling priority instead of process priority
+def set_thread_priority():
+    try:
+        import ctypes
+        libc = ctypes.CDLL('libc.so.6')
+        
+        # Define constants if not in os module
+        SCHED_OTHER = 0  # Normal scheduling
+        SCHED_FIFO = 1   # Real-time scheduling
+        
+        # Get the current thread ID
+        tid = ctypes.CDLL('libc.so.6').syscall(186)  # SYS_gettid
+        
+        # Define the sched_param struct
+        class SchedParam(ctypes.Structure):
+            _fields_ = [("sched_priority", ctypes.c_int)]
+        
+        # Try with progressively lower priorities until one works
+        for priority in [30, 20, 10, 5, 1]:
+            param = SchedParam(priority)  # Start with lower priority values
+            result = libc.sched_setscheduler(tid, SCHED_FIFO, ctypes.byref(param))
+            if result == 0:
+                logger.info(f"Thread scheduling priority set successfully (priority={priority})")
+                return True
+        
+        # If FIFO scheduling failed, try normal scheduling with highest nice value
+        try:
+            os.sched_setscheduler(0, os.SCHED_OTHER, os.sched_param(0))
+            logger.info("Using normal scheduling with high priority")
+            return True
+        except AttributeError:
+            # If os.sched_setscheduler is not available, try to use libc
+            param = SchedParam(0)
+            result = libc.sched_setscheduler(tid, SCHED_OTHER, ctypes.byref(param))
+            if result == 0:
+                logger.info("Using normal scheduling")
+                return True
+            
+        logger.warning("Failed to set any thread scheduling priority")
+        return False
+    except Exception as e:
+        logger.warning(f"Error setting thread priority: {e}")
+        return False
 
 # Performance monitoring
 class PerformanceMonitor:
@@ -155,6 +194,7 @@ def main() -> None:
     ap.add_argument("--mount", default="oak", help="RTSP mount point (eg. front_camera)")
     ap.add_argument("--fps", default=30, type=int, help="Camera frame-rate")
     ap.add_argument("--buffer-size", default=1, type=int, help="Output queue buffer size")
+    ap.add_argument("--no-rt", action="store_true", help="Disable real-time priority attempts")
     args = ap.parse_args()
 
     # device_info = dai.DeviceInfo(args.ip) if args.ip else None
@@ -211,6 +251,11 @@ def main() -> None:
     # Start frame pump thread with real-time priority
     frame_thread = threading.Thread(target=pump_frames, daemon=True)
     frame_thread.start()
+    
+    # Try to set thread priority after thread has started - only if not disabled
+    if frame_thread.is_alive() and not args.no_rt:
+        time.sleep(0.1)  # Give the thread a moment to start
+        set_thread_priority()
 
     # Graceful shutdown on Ctrl-C
     def shutdown_handler(signum, frame):
