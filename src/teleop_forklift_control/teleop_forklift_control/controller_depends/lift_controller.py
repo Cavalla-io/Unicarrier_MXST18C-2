@@ -34,12 +34,14 @@ class LiftController:
         drive_byte = 0x02  # neutral drive
         # Process lift commands:
         if cmd["lift"]:
-            current_state = 0x14
-            current_action = 0x01
+            current_state = 0xFF
+            # Update lifting speed from input listener
+            self.lifting_speed = 0x08 if cmd["fast_move"] else 0x07
+            current_action = self.lifting_speed
         elif cmd["lower"]:
             current_state = 0x00
             # Update lowering speed from input listener
-            self.lowering_speed = 0xF8 if cmd["fast_lower"] else 0xF9
+            self.lowering_speed = 0xF8 if cmd["fast_move"] else 0xF9
             current_action = self.lowering_speed if self.lowering_toggle else 0xFF
             self.lowering_toggle = not self.lowering_toggle
         else:
