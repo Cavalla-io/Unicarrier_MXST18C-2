@@ -126,7 +126,7 @@ class InputListener:
                 self.lift_command["lower"] = (msg.buttons[13] == 1)
                 
                 # Check button 4 for slow lowering mode
-                self.lift_command["fast_lower"] = (msg.buttons[4] == 1)
+                self.lift_command["fast_move"] = (msg.buttons[4] == 1)
                 
                 # Drive command for lift using buttons 1 and 3
                 if msg.buttons[2] == 1:
@@ -143,6 +143,16 @@ class InputListener:
                     self.lift_command["sideshift"] = 'R'
                 else:
                     self.lift_command["sideshift"] = None
+                
+                # Tilt controls
+                if len(msg.axes) > 0:
+                    tilt_val = msg.axes[0]
+                    if tilt_val < -0.5:
+                        self.lift_command["tilt"] = 'TILT_DOWN'
+                    elif tilt_val > 0.5:
+                        self.lift_command["tilt"] = 'TILT_UP'
+                    else:
+                        self.lift_command["tilt"] = None
 
     def twist_callback(self, msg: Twist):
         # If you wish to use Twist messages for lift commands, implement your mapping here.
