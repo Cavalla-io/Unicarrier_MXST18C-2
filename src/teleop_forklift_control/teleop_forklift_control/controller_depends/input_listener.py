@@ -146,7 +146,7 @@ class InputListener:
                 
                 # Tilt controls
                 if len(msg.axes) > 0:
-                    tilt_val = msg.axes[0]
+                    tilt_val = msg.axes[3]
                     if tilt_val < -0.5:
                         self.lift_command["tilt"] = 'TILT_DOWN'
                     elif tilt_val > 0.5:
