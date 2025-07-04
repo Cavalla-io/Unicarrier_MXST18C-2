@@ -94,16 +94,26 @@ class InputListener:
         
         with self._lock:
             # ----- Drive Command Mapping -----
-            # For drive throttle, using axis 7 which provides values from 0 to 1
+            # For drive throttle, using axis 4 for backward and axis 5 for forward
             if len(msg.axes) > 5:
-                # Use the value directly if it's in the 0 to 1 range
-                throttle_value = msg.axes[5] if msg.axes[5] > 0 else 0
-                self.drive_command["throttle"] = throttle_value
+                # Check axis 4 for backward movement
+                backward_throttle = msg.axes[4] if msg.axes[4] > 0 else 0
+                # Check axis 5 for forward movement
+                forward_throttle = msg.axes[5] if msg.axes[5] > 0 else 0
+                
+                if backward_throttle > 0:
+                    self.drive_command["throttle"] = backward_throttle
+                    self.lift_command["drive"] = "BACKWARD"
+                elif forward_throttle > 0:
+                    self.drive_command["throttle"] = forward_throttle
+                    self.lift_command["drive"] = "FORWARD"
+                else:
+                    self.drive_command["throttle"] = 0
+                    self.lift_command["drive"] = "NEUTRAL"
             
             # Log throttle value periodically
             self.throttle_log_counter += 1
             if self.throttle_log_counter >= self.log_interval:
-                # self.node.get_logger().info(f"Input Listener - Current throttle value: {throttle_value:.3f}")
                 self.throttle_log_counter = 0
             
             # For drive steering, assume the left analog horizontal axis (axes[0]).
