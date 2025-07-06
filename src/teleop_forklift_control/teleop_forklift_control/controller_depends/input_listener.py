@@ -102,11 +102,11 @@ class InputListener:
                 forward_throttle = msg.axes[5] if msg.axes[5] > 0 else 0
                 
                 if backward_throttle > 0:
-                    self.drive_command["throttle"] = backward_throttle
                     self.lift_command["drive"] = "BACKWARD"
+                    self.drive_command["throttle"] = backward_throttle
                 elif forward_throttle > 0:
-                    self.drive_command["throttle"] = forward_throttle
                     self.lift_command["drive"] = "FORWARD"
+                    self.drive_command["throttle"] = forward_throttle
                 else:
                     self.drive_command["throttle"] = 0
                     self.lift_command["drive"] = "NEUTRAL"
